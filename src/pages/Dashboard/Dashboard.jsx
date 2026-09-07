@@ -13,7 +13,7 @@ import {
 import Layout from "../../components/layout/Layout";
 import VideoPanel from "../../components/visualization/VideoPanel";
 import RiskPanel from "../../components/visualization/RiskPanel";
-import AclLandingHeatmap from "../../components/visualization/AclLandingHeatmap";
+import AclRiskHeatmap from "../../components/visualization/AclRiskHeatmap";
 import MovementScoreRadar from "../../components/visualization/MovementScoreRadar";
 import JointRiskBreakdown from "../../components/visualization/JointRiskBreakdown";
 import MovementQuality from "../../components/visualization/MovementQuality";
@@ -137,8 +137,8 @@ export default function Dashboard() {
               <RiskPanel />
             </div>
 
-            {/* SECTION 2: Dedicated Landing-Frame ACL Risk Heatmap ("WHERE AND WHEN IS THE ATHLETE AT RISK?") */}
-            <AclLandingHeatmap />
+            {/* SECTION 2: Dedicated Biomechanical ACL Risk Heatmap ("WHERE AND HOW IS THE ATHLETE AT RISK?") */}
+            <AclRiskHeatmap />
 
             {/* Movement Quality Score, Radar Profile, & Phases */}
             <MovementScoreRadar />

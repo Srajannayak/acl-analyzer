@@ -788,11 +788,648 @@
 }
 
 /* ============================================================
-   RESPONSIVE BREAKPOINTS (PHASE 15)
+   BIOMECHANICAL ACL RISK HEATMAP & ABSTRACT JOINT SCHEMATIC
+   ============================================================ */
+
+.biomech-heatmap-card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid #EEF2F6;
+  margin-bottom: 32px;
+  transition: all 0.3s ease;
+}
+
+.biomech-heatmap-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #F1F5F9;
+  margin-bottom: 24px;
+}
+
+.biomech-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.biomech-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.biomech-pulse-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+  animation: pulseHeatmapDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseHeatmapDot {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 8px rgba(37, 99, 235, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+
+.biomech-status-title {
+  font-size: 14px;
+  color: #334155;
+}
+
+.biomech-status-title b {
+  color: #0F172A;
+}
+
+.biomech-topbar-badge span {
+  display: inline-block;
+  background: #EEF5FF;
+  color: #2563EB;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 14px;
+}
+
+.biomech-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.biomech-filter-btn {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  color: #64748B;
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.biomech-filter-btn:hover {
+  background: #EEF5FF;
+  color: #2563EB;
+  border-color: #BFDBFE;
+}
+
+.biomech-filter-btn.active {
+  background: #2563EB;
+  color: #FFFFFF;
+  border-color: #2563EB;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.biomech-heatmap-layout {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* --- Left Column: Horizontal Heatmap --- */
+.biomech-heatmap-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.biomech-intensity-guide {
+  display: grid;
+  grid-template-columns: 190px 1fr 140px;
+  gap: 16px;
+  align-items: center;
+  padding: 10px 16px;
+  background: #F8FAFC;
+  border-radius: 14px;
+  border: 1px solid #F1F5F9;
+}
+
+.biomech-guide-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748B;
+  letter-spacing: 0.05em;
+}
+
+.biomech-guide-track-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.biomech-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #64748B;
+}
+
+.scale-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.scale-dot.safe { background: #10B981; }
+.scale-dot.mod { background: #F59E0B; }
+.scale-dot.high { background: #EF4444; }
+
+.scale-safe { color: #059669; display: inline-flex; align-items: center; }
+.scale-mod { color: #D97706; display: inline-flex; align-items: center; }
+.scale-high { color: #DC2626; display: inline-flex; align-items: center; }
+
+.biomech-scale-bar-track {
+  height: 6px;
+  border-radius: 4px;
+  display: grid;
+  grid-template-columns: 30% 30% 40%;
+  overflow: hidden;
+  background: #E2E8F0;
+}
+
+.scale-zone.zone-safe { background: #10B981; opacity: 0.85; }
+.scale-zone.zone-mod { background: #F59E0B; opacity: 0.85; }
+.scale-zone.zone-high { background: #EF4444; opacity: 0.85; }
+
+.biomech-guide-val-col {
+  text-align: right;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748B;
+  letter-spacing: 0.05em;
+}
+
+.biomech-params-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.biomech-param-row {
+  display: grid;
+  grid-template-columns: 190px 1fr 140px;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+  background: #FFFFFF;
+  border: 1px solid #EEF2F6;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.biomech-param-row:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+}
+
+.biomech-param-row.row-active {
+  background: #F0F7FF;
+  border-color: #93C5FD;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+}
+
+.biomech-row-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.biomech-icon-wrapper {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #F8FAFC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #F1F5F9;
+}
+
+.row-active .biomech-icon-wrapper {
+  background: #FFFFFF;
+  border-color: #BFDBFE;
+}
+
+.biomech-row-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.biomech-param-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F172A;
+  white-space: nowrap;
+}
+
+.biomech-param-target {
+  font-size: 11px;
+  color: #64748B;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Horizontal Heatmap Bar */
+.biomech-bar-container {
+  position: relative;
+  width: 100%;
+}
+
+.biomech-bar-track {
+  position: relative;
+  width: 100%;
+  height: 22px;
+  border-radius: 11px;
+  background: #E2E8F0;
+  overflow: visible;
+}
+
+.biomech-gradient-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 11px;
+  background: linear-gradient(
+    90deg,
+    rgba(16, 185, 129, 0.2) 0%,
+    rgba(52, 211, 153, 0.25) 28%,
+    rgba(245, 158, 11, 0.3) 55%,
+    rgba(249, 115, 22, 0.35) 75%,
+    rgba(239, 68, 68, 0.45) 100%
+  );
+  border: 1px solid rgba(203, 213, 225, 0.6);
+}
+
+.biomech-heat-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border-radius: 11px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.biomech-heat-fill.safe {
+  background: linear-gradient(90deg, #10B981 0%, #34D399 100%);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+.biomech-heat-fill.moderate {
+  background: linear-gradient(90deg, #10B981 0%, #F59E0B 100%);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+}
+
+.biomech-heat-fill.high {
+  background: linear-gradient(90deg, #10B981 0%, #F59E0B 40%, #EF4444 100%);
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.5);
+}
+
+.biomech-heat-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: heatShimmer 3s infinite;
+}
+
+@keyframes heatShimmer {
+  0% { left: -100%; }
+  50% { left: 140%; }
+  100% { left: 140%; }
+}
+
+.biomech-needle {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 3px;
+  transform: translateX(-50%);
+  background: #0F172A;
+  border-radius: 2px;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: left 0.4s ease;
+}
+
+.biomech-needle-dot {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+}
+
+.biomech-track-ticks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.tick-mark {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  width: 1px;
+  background: rgba(148, 163, 184, 0.5);
+}
+
+.biomech-row-value-col {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.biomech-value-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.biomech-measured-num {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.biomech-tier-pill {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 3px;
+  letter-spacing: 0.02em;
+}
+
+.biomech-tier-pill.pill-safe {
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+}
+
+.biomech-tier-pill.pill-mod {
+  background: #FFFBEB;
+  color: #D97706;
+  border: 1px solid #FDE68A;
+}
+
+.biomech-tier-pill.pill-high {
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+.biomech-row-chevron {
+  color: #CBD5E1;
+  transition: all 0.2s ease;
+}
+
+.biomech-row-chevron.chevron-active {
+  color: #2563EB;
+  transform: translateX(2px);
+}
+
+/* --- Right Column: Abstract Joint Schematic & Popover --- */
+.biomech-schematic-sidebar {
+  background: #F8FAFC;
+  border-radius: 20px;
+  padding: 22px;
+  border: 1px solid #E2E8F0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.biomech-schematic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.schematic-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.schematic-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #2563EB;
+  letter-spacing: 0.06em;
+}
+
+.schematic-title-group h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.schematic-note {
+  font-size: 11px;
+  color: #64748B;
+  font-weight: 600;
+}
+
+.biomech-svg-container {
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid #EEF2F6;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.biomech-body-svg {
+  width: 100%;
+  max-height: 290px;
+  display: block;
+}
+
+.svg-joint-node {
+  transition: all 0.2s ease;
+}
+
+.svg-joint-node:hover circle:first-child {
+  transform: scale(1.1);
+  transform-origin: center;
+}
+
+/* Popover Card */
+.biomech-popover-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.popover-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.popover-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.popover-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.popover-title-row h5 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.popover-bilateral {
+  font-size: 11px;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.popover-desc {
+  font-size: 12.5px;
+  color: #475569;
+  line-height: 19px;
+}
+
+.popover-acl-relevance {
+  background: #F8FAFC;
+  border-radius: 10px;
+  padding: 10px 12px;
+  border-left: 3px solid #2563EB;
+}
+
+.popover-acl-relevance b {
+  display: block;
+  font-size: 11px;
+  color: #1E293B;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.popover-acl-relevance p {
+  font-size: 12px;
+  color: #475569;
+  line-height: 18px;
+  margin: 0;
+}
+
+/* Footer / Legend */
+.biomech-heatmap-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #F1F5F9;
+}
+
+.biomech-legend-items {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.biomech-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #475569;
+}
+
+.legend-marker {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-marker.safe { background: #10B981; }
+.legend-marker.mod { background: #F59E0B; }
+.legend-marker.high { background: #EF4444; }
+
+.biomech-disclaimer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: #64748B;
+  max-width: 600px;
+  line-height: 18px;
+}
+
+/* ============================================================
+   RESPONSIVE BREAKPOINTS
    ============================================================ */
 
 @media (max-width: 1100px) {
   .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .biomech-heatmap-layout {
     grid-template-columns: 1fr;
   }
 
@@ -813,12 +1450,35 @@
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
   .dashboard-header h1 {
     font-size: 30px;
   }
 
   .athlete-overview-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .biomech-intensity-guide {
+    grid-template-columns: 1fr;
+  }
+
+  .biomech-guide-track-col,
+  .biomech-guide-val-col {
+    display: none;
+  }
+
+  .biomech-param-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .biomech-row-value-col {
+    justify-content: space-between;
+  }
+
+  .biomech-heatmap-footer {
     flex-direction: column;
     align-items: flex-start;
   }
