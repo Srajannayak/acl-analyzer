@@ -8,11 +8,14 @@ import {
   ShieldAlert,
   ArrowRight,
   Sparkles,
+  Activity,
 } from "lucide-react";
 
 import Layout from "../../components/layout/Layout";
 import VideoPanel from "../../components/visualization/VideoPanel";
 import RiskPanel from "../../components/visualization/RiskPanel";
+import LandingProblemMap from "../../components/visualization/LandingProblemMap";
+import LandingComparison from "../../components/visualization/LandingComparison";
 import AclRiskHeatmap from "../../components/visualization/AclRiskHeatmap";
 import MovementScoreRadar from "../../components/visualization/MovementScoreRadar";
 import JointRiskBreakdown from "../../components/visualization/JointRiskBreakdown";
@@ -20,6 +23,7 @@ import MovementQuality from "../../components/visualization/MovementQuality";
 import MetricsSection from "../../components/visualization/MetricsSection";
 import ChartsSection from "../../components/visualization/ChartsSection";
 import RecommendationPanel from "../../components/visualization/RecommendationPanel";
+import EducationalLanding from "../../components/visualization/EducationalLanding";
 import AnalysisSummary from "../../components/visualization/AnalysisSummary";
 import DataInspectorModal from "../../components/visualization/DataInspectorModal";
 import { useAnalysis } from "../../context/AnalysisContext";
@@ -69,20 +73,72 @@ export default function Dashboard() {
   return (
     <Layout>
       <section className="dashboard">
-        <div className="dashboard-header">
-          <span>AI BIOMECHANICAL ANALYSIS</span>
-          <h1>Athlete Kinematic Intelligence Dashboard</h1>
-          <p>
-            Computer vision 3D pose estimation, landing-frame risk heatmap, dynamic joint kinematics, and machine-learning ACL injury risk prediction.
-          </p>
+        {/* DASHBOARD HERO SECTION */}
+        <div className="dashboard-hero-section card-3d">
+          <div className="hero-content-left">
+            <div className="hero-badge-row">
+              <span className="hero-medical-badge">
+                <Sparkles size={14} color="#0284c7" />
+                ACL ANALYZER
+              </span>
+              <span className="hero-version-badge">Clinical AI v3.2</span>
+            </div>
+
+            <h1 className="hero-headline">
+              AI-Powered Landing Biomechanics &amp; ACL Risk Assessment
+            </h1>
+
+            <p className="hero-description">
+              Computer vision 3D pose estimation, landing-frame risk heatmap, dynamic joint kinematics, and machine-learning ACL injury risk prediction.
+            </p>
+
+            <div className="hero-tech-pills">
+              <span className="hero-pill">
+                <Activity size={13} color="#0284c7" />
+                MediaPipe 33-Point Pose
+              </span>
+              <span className="hero-pill">
+                <ShieldAlert size={13} color="#0284c7" />
+                Random Forest Classifier
+              </span>
+              <span className="hero-pill">
+                <Calendar size={13} color="#0284c7" />
+                Real-Time Kinematics
+              </span>
+            </div>
+          </div>
+
+          {/* Abstract Medical Biomechanical Visual Element */}
+          <div className="hero-abstract-art" aria-hidden="true">
+            <div className="abstract-glow-orb primary" />
+            <div className="abstract-glow-orb cyan" />
+            <div className="abstract-grid-pattern" />
+          </div>
         </div>
 
         {!data ? (
-          <div className="athlete-overview-card" style={{ justifyContent: "center", textAlign: "center", padding: "60px 20px" }}>
+          <div className="athlete-overview-card card-3d" style={{ justifyContent: "center", textAlign: "center", padding: "60px 20px" }}>
             <div>
-              <UploadCloud size={60} color="#2563EB" style={{ margin: "0 auto 20px" }} />
-              <h2 style={{ marginBottom: "12px", fontSize: "24px" }}>No Analysis Session Active</h2>
-              <p style={{ color: "#64748B", marginBottom: "26px", maxWidth: "500px" }}>
+              <div
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "24px",
+                  background: "#f0f9ff",
+                  border: "1px solid #bae6fd",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 20px",
+                  color: "#0284c7",
+                }}
+              >
+                <UploadCloud size={44} />
+              </div>
+              <h2 style={{ marginBottom: "12px", fontSize: "24px", color: "#0f172a", fontWeight: 800 }}>
+                No Analysis Session Active
+              </h2>
+              <p style={{ color: "#64748b", marginBottom: "26px", maxWidth: "520px", lineHeight: "1.6" }}>
                 Upload an athlete landing or jump video to run automated pose tracking and generate real biomechanical analytics.
               </p>
               <button
@@ -98,10 +154,10 @@ export default function Dashboard() {
         ) : (
           <>
             {/* Top Athlete Overview Banner */}
-            <div className="athlete-overview-card">
+            <div className="athlete-overview-card card-3d">
               <div className="overview-left">
                 <div className="overview-avatar">
-                  <Video size={26} />
+                  <Video size={24} color="#0284c7" />
                 </div>
                 <div className="overview-details">
                   <h3>{filename}</h3>
@@ -110,7 +166,10 @@ export default function Dashboard() {
                     <span>•</span>
                     <span><b>Frames Analyzed:</b> {data.frames ?? data.total_frames ?? "--"}</span>
                     <span>•</span>
-                    <span><b>Status:</b> Completed</span>
+                    <span className="overview-status-chip">
+                      <span className="status-dot-active" />
+                      Completed
+                    </span>
                   </div>
                 </div>
               </div>
@@ -131,14 +190,23 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* SECTION 1: Full Video MediaPipe Pose Analysis ("HOW THE AI TRACKED THE ATHLETE") */}
+            {/* SECTION 1: Full Video MediaPipe Pose Analysis */}
             <div className="dashboard-grid">
               <VideoPanel />
               <RiskPanel />
             </div>
 
-            {/* SECTION 2: Dedicated Biomechanical ACL Risk Heatmap ("WHERE AND HOW IS THE ATHLETE AT RISK?") */}
+            {/* SECTION 2: Landing Problem Map & Kinematic Flaw Analysis */}
+            <LandingProblemMap />
+
+            {/* SECTION 3: Current vs Recommended Landing Mechanics */}
+            <LandingComparison />
+
+            {/* SECTION 4: Dedicated 3D Biomechanical ACL Risk Heatmap */}
             <AclRiskHeatmap />
+
+            {/* 6 Biomechanical Kinematics Cards */}
+            <MetricsSection />
 
             {/* Movement Quality Score, Radar Profile, & Phases */}
             <MovementScoreRadar />
@@ -149,14 +217,14 @@ export default function Dashboard() {
             {/* Movement Quality Assessment */}
             <MovementQuality />
 
-            {/* 6 Biomechanical Kinematics Cards */}
-            <MetricsSection />
-
             {/* Dynamic Joint Angle Charts */}
             <ChartsSection />
 
             {/* AI Performance Recommendations */}
             <RecommendationPanel />
+
+            {/* Understanding Your Landing - Educational Biomechanics Guide */}
+            <EducationalLanding />
 
             {/* Clinical Biomechanics Summary */}
             <AnalysisSummary />

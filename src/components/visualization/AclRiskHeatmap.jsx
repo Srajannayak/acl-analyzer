@@ -98,15 +98,15 @@ export default function AclRiskHeatmap() {
     // 2. Knee Flexion (Lower flexion = higher ACL shear)
     let flexRisk = 18;
     let flexTier = "SAFE";
-    if (minKneeFlex < 45.0) {
+    if (minKneeFlex < 30.0) {
       flexTier = "HIGH";
-      flexRisk = Math.min(96, 65 + ((45.0 - Math.max(10, minKneeFlex)) / 35.0) * 31);
-    } else if (minKneeFlex < 60.0) {
+      flexRisk = Math.min(96, 65 + ((30.0 - Math.max(10, minKneeFlex)) / 20.0) * 31);
+    } else if (minKneeFlex < 43.0) {
       flexTier = "MODERATE";
-      flexRisk = 32 + ((60.0 - minKneeFlex) / 15.0) * 28;
+      flexRisk = 32 + ((43.0 - minKneeFlex) / 13.0) * 28;
     } else {
       flexTier = "SAFE";
-      flexRisk = Math.max(10, 28 - ((minKneeFlex - 60.0) / 40.0) * 18);
+      flexRisk = Math.max(10, 25 - ((minKneeFlex - 43.0) / 40.0) * 15);
     }
 
     // 3. Hip Flexion (Sagittal hinge)
@@ -328,47 +328,121 @@ export default function AclRiskHeatmap() {
     overallRiskLevel,
   ]);
 
-  // Compute individual joint tier states for the abstract lower body SVG diagram
+  const [hoveredJoint, setHoveredJoint] = useState(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  // Compute individual joint tier states for the pseudo-3D biomechanical body
   const jointSchematicStates = useMemo(() => {
     const evalKnee = (valg, flex) => {
-      if (valg >= 12.0 || flex < 45.0) return { tier: "HIGH", color: "#EF4444", aura: "rgba(239, 68, 68, 0.45)" };
-      if (valg >= 6.0 || flex < 60.0) return { tier: "MODERATE", color: "#F59E0B", aura: "rgba(245, 158, 11, 0.4)" };
-      return { tier: "SAFE", color: "#10B981", aura: "rgba(16, 185, 129, 0.35)" };
+      if (valg >= 12.0 || flex < 45.0) return { tier: "HIGH", color: "#EF4444", aura: "rgba(239, 68, 68, 0.55)" };
+      if (valg >= 6.0 || flex < 60.0) return { tier: "MODERATE", color: "#F59E0B", aura: "rgba(245, 158, 11, 0.45)" };
+      return { tier: "SAFE", color: "#0284C7", aura: "rgba(2, 132, 199, 0.4)" };
     };
 
     const evalHip = (flex) => {
-      if (flex < 40.0) return { tier: "HIGH", color: "#EF4444", aura: "rgba(239, 68, 68, 0.45)" };
-      if (flex < 55.0) return { tier: "MODERATE", color: "#F59E0B", aura: "rgba(245, 158, 11, 0.4)" };
-      return { tier: "SAFE", color: "#10B981", aura: "rgba(16, 185, 129, 0.35)" };
+      if (flex < 40.0) return { tier: "HIGH", color: "#EF4444", aura: "rgba(239, 68, 68, 0.55)" };
+      if (flex < 55.0) return { tier: "MODERATE", color: "#F59E0B", aura: "rgba(245, 158, 11, 0.45)" };
+      return { tier: "SAFE", color: "#0284C7", aura: "rgba(2, 132, 199, 0.4)" };
     };
 
     const evalAnkle = (ank) => {
-      if (ank < 12.0 || ank > 50.0) return { tier: "HIGH", color: "#EF4444", aura: "rgba(239, 68, 68, 0.45)" };
-      if (ank < 20.0) return { tier: "MODERATE", color: "#F59E0B", aura: "rgba(245, 158, 11, 0.4)" };
-      return { tier: "SAFE", color: "#10B981", aura: "rgba(16, 185, 129, 0.35)" };
+      if (ank < 12.0 || ank > 50.0) return { tier: "HIGH", color: "#EF4444", aura: "rgba(239, 68, 68, 0.55)" };
+      if (ank < 20.0) return { tier: "MODERATE", color: "#F59E0B", aura: "rgba(245, 158, 11, 0.45)" };
+      return { tier: "SAFE", color: "#0284C7", aura: "rgba(2, 132, 199, 0.4)" };
+    };
+
+    const evalTrunk = (incl) => {
+      if (incl < 5.0 || incl > 45.0) return { tier: "HIGH", color: "#EF4444", aura: "rgba(239, 68, 68, 0.55)" };
+      if (incl < 10.0 || incl > 35.0) return { tier: "MODERATE", color: "#F59E0B", aura: "rgba(245, 158, 11, 0.45)" };
+      return { tier: "SAFE", color: "#0284C7", aura: "rgba(2, 132, 199, 0.4)" };
+    };
+
+    const evalHead = (score) => {
+      if (score >= 60) return { tier: "HIGH", color: "#EF4444", aura: "rgba(239, 68, 68, 0.55)" };
+      if (score >= 30) return { tier: "MODERATE", color: "#F59E0B", aura: "rgba(245, 158, 11, 0.45)" };
+      return { tier: "SAFE", color: "#0284C7", aura: "rgba(2, 132, 199, 0.4)" };
     };
 
     return {
-      leftHip: { id: "left_hip", name: "Left Hip", angle: `${lHipFlex.toFixed(1)}°`, ...evalHip(lHipFlex) },
-      rightHip: { id: "right_hip", name: "Right Hip", angle: `${rHipFlex.toFixed(1)}°`, ...evalHip(rHipFlex) },
+      head: {
+        id: "head",
+        name: "Head / Upper Body",
+        angle: `${Math.max(10, 100 - overallRiskScore)} / 100`,
+        target: "Optimal Posture & Visual Gaze",
+        linkedParam: "movement_quality",
+        ...evalHead(overallRiskScore),
+      },
+      trunk: {
+        id: "trunk",
+        name: "Trunk / Lumbar Spine",
+        angle: `${trunkInclination.toFixed(1)}° Lean`,
+        target: "Target: 10° – 35° Forward Lean",
+        linkedParam: "landing_stability",
+        ...evalTrunk(trunkInclination),
+      },
+      leftHip: {
+        id: "left_hip",
+        name: "Left Hip",
+        angle: `${lHipFlex.toFixed(1)}°`,
+        target: "Target: > 55.0° (Gluteal Hinge)",
+        linkedParam: "hip_flexion",
+        ...evalHip(lHipFlex),
+      },
+      rightHip: {
+        id: "right_hip",
+        name: "Right Hip",
+        angle: `${rHipFlex.toFixed(1)}°`,
+        target: "Target: > 55.0° (Gluteal Hinge)",
+        linkedParam: "hip_flexion",
+        ...evalHip(rHipFlex),
+      },
       leftKnee: {
         id: "left_knee",
-        name: "Left Knee",
+        name: "Left Knee (ACL Focal Point)",
         valgus: `${lKneeValgus.toFixed(1)}°`,
         flexion: `${lKneeFlex.toFixed(1)}°`,
+        target: "Target: Valgus < 5°, Flexion > 60°",
+        linkedParam: "knee_valgus",
         ...evalKnee(lKneeValgus, lKneeFlex),
       },
       rightKnee: {
         id: "right_knee",
-        name: "Right Knee",
+        name: "Right Knee (ACL Focal Point)",
         valgus: `${rKneeValgus.toFixed(1)}°`,
         flexion: `${rKneeFlex.toFixed(1)}°`,
+        target: "Target: Valgus < 5°, Flexion > 60°",
+        linkedParam: "knee_valgus",
         ...evalKnee(rKneeValgus, rKneeFlex),
       },
-      leftAnkle: { id: "left_ankle", name: "Left Ankle", angle: `${lAnkle.toFixed(1)}°`, ...evalAnkle(lAnkle) },
-      rightAnkle: { id: "right_ankle", name: "Right Ankle", angle: `${rAnkle.toFixed(1)}°`, ...evalAnkle(rAnkle) },
+      leftAnkle: {
+        id: "left_ankle",
+        name: "Left Ankle",
+        angle: `${lAnkle.toFixed(1)}°`,
+        target: "Target: 20° – 45° Dorsiflexion",
+        linkedParam: "ankle_dorsiflexion",
+        ...evalAnkle(lAnkle),
+      },
+      rightAnkle: {
+        id: "right_ankle",
+        name: "Right Ankle",
+        angle: `${rAnkle.toFixed(1)}°`,
+        target: "Target: 20° – 45° Dorsiflexion",
+        linkedParam: "ankle_dorsiflexion",
+        ...evalAnkle(rAnkle),
+      },
     };
-  }, [lHipFlex, rHipFlex, lKneeValgus, rKneeValgus, lKneeFlex, rKneeFlex, lAnkle, rAnkle]);
+  }, [
+    lHipFlex,
+    rHipFlex,
+    lKneeValgus,
+    rKneeValgus,
+    lKneeFlex,
+    rKneeFlex,
+    lAnkle,
+    rAnkle,
+    trunkInclination,
+    overallRiskScore,
+  ]);
 
   // Filtered parameters
   const filteredParameters = useMemo(() => {
@@ -386,7 +460,7 @@ export default function AclRiskHeatmap() {
   const getTierColor = (tier) => {
     if (tier === "HIGH") return "#EF4444";
     if (tier === "MODERATE") return "#F59E0B";
-    return "#10B981";
+    return "#0284C7"; // Cool Medical Blue
   };
 
   const getTierPillClass = (tier) => {
@@ -394,6 +468,23 @@ export default function AclRiskHeatmap() {
     if (tier === "MODERATE") return "pill-mod";
     return "pill-safe";
   };
+
+  // 3D subtle mouse-following tilt handlers
+  const handleSchematicMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const xRatio = (e.clientX - rect.left) / rect.width - 0.5;
+    const yRatio = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({
+      x: Math.max(-6, Math.min(6, -(yRatio * 10))),
+      y: Math.max(-6, Math.min(6, xRatio * 10)),
+    });
+  };
+
+  const handleSchematicMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+    setHoveredJoint(null);
+  };
+
 
   return (
     <section className="section-container" style={{ marginTop: "24px" }}>
@@ -566,167 +657,262 @@ export default function AclRiskHeatmap() {
             </div>
           </div>
 
-          {/* Right Column: Abstract Lower-Body Vector SVG Schematic & Interactive Inspector */}
+          {/* Right Column: Pseudo-3D Biomechanical Body Visualization & Interactive Inspector */}
           <div className="biomech-schematic-sidebar">
             <div className="biomech-schematic-header">
               <div className="schematic-title-group">
-                <span className="schematic-badge">BIOMECHANICAL SCHEMATIC</span>
-                <h4>Lower Extremity Joint Risk</h4>
+                <span className="schematic-badge">PSEUDO-3D KINEMATICS</span>
+                <h4>Biomechanical Joint Heatmap</h4>
               </div>
-              <span className="schematic-note">Bilateral Alignment</span>
+              <span className="schematic-note">Interactive 3D Perspective</span>
             </div>
 
-            {/* Clean Abstract Lower-Body Vector Diagram */}
-            <div className="biomech-svg-container">
+            {/* Pseudo-3D Human Anatomical Skeleton SVG Container */}
+            <div
+              className="biomech-svg-container"
+              onMouseMove={handleSchematicMouseMove}
+              onMouseLeave={handleSchematicMouseLeave}
+              style={{
+                perspective: "700px",
+                position: "relative",
+              }}
+            >
               <svg
-                viewBox="0 0 340 380"
+                viewBox="0 0 360 480"
                 className="biomech-body-svg"
                 preserveAspectRatio="xMidYMid meet"
+                style={{
+                  transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+                  transition: "transform 0.12s cubic-bezier(0.2, 0, 0.2, 1)",
+                  transformStyle: "preserve-3d",
+                }}
               >
                 <defs>
-                  {/* Subtle Grid Pattern for Technical Analytics Feel */}
+                  {/* Technical Background Grid */}
                   <pattern id="biomechGrid" width="20" height="20" patternUnits="userSpaceOnUse">
                     <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#F1F5F9" strokeWidth="0.8" />
                   </pattern>
 
-                  {/* High Risk Radial Aura Glow */}
+                  {/* 3D Tubular Bone Shading Gradients */}
+                  <linearGradient id="bone3DGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#94A3B8" />
+                    <stop offset="45%" stopColor="#E2E8F0" />
+                    <stop offset="65%" stopColor="#CBD5E1" />
+                    <stop offset="100%" stopColor="#64748B" />
+                  </linearGradient>
+
+                  <linearGradient id="spineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#0284C7" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#64748B" stopOpacity="0.8" />
+                  </linearGradient>
+
+                  {/* 3D Segment Drop Shadow */}
+                  <filter id="segmentShadow3D" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="rgba(15, 23, 42, 0.1)" />
+                  </filter>
+
+                  {/* Risk Halo Glows (Medical AI System) */}
                   <radialGradient id="highRiskHalo" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#EF4444" stopOpacity="0.8" />
-                    <stop offset="50%" stopColor="#EF4444" stopOpacity="0.3" />
+                    <stop offset="0%" stopColor="#EF4444" stopOpacity="0.85" />
+                    <stop offset="50%" stopColor="#EF4444" stopOpacity="0.35" />
                     <stop offset="100%" stopColor="#EF4444" stopOpacity="0" />
                   </radialGradient>
 
-                  {/* Moderate Risk Radial Aura Glow */}
                   <radialGradient id="modRiskHalo" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.75" />
-                    <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.25" />
+                    <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.8" />
+                    <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.3" />
                     <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
                   </radialGradient>
 
-                  {/* Safe Risk Radial Aura Glow */}
                   <radialGradient id="safeRiskHalo" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#10B981" stopOpacity="0.7" />
-                    <stop offset="50%" stopColor="#10B981" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#0284C7" stopOpacity="0.8" />
+                    <stop offset="50%" stopColor="#0284C7" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#0284C7" stopOpacity="0" />
+                  </radialGradient>
+
+                  {/* 3D Cranium Radial Shading */}
+                  <radialGradient id="cranium3D" cx="40%" cy="35%" r="65%">
+                    <stop offset="0%" stopColor="#FFFFFF" />
+                    <stop offset="55%" stopColor="#E2E8F0" />
+                    <stop offset="100%" stopColor="#94A3B8" />
+                  </radialGradient>
+
+                  {/* Ground 3D Plane Radial Gradient */}
+                  <radialGradient id="groundPlaneGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="#E2E8F0" stopOpacity="0.7" />
+                    <stop offset="70%" stopColor="#F1F5F9" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                   </radialGradient>
                 </defs>
 
                 {/* Technical grid backdrop */}
-                <rect x="0" y="0" width="340" height="380" fill="url(#biomechGrid)" rx="16" />
+                <rect x="0" y="0" width="360" height="480" fill="url(#biomechGrid)" rx="18" />
 
-                {/* Lumbar / Spine Axis Center Line */}
-                <line
-                  x1="170"
-                  y1="25"
-                  x2="170"
-                  y2="75"
-                  stroke="#CBD5E1"
-                  strokeWidth="3.5"
-                  strokeDasharray="4 3"
-                />
+                {/* 3D Depth Ground Landing Platform */}
+                <ellipse cx="180" cy="455" rx="130" ry="16" fill="url(#groundPlaneGrad)" />
+                <ellipse cx="180" cy="455" rx="90" ry="10" fill="none" stroke="#CBD5E1" strokeWidth="1" strokeDasharray="4 4" />
+                <line x1="40" y1="455" x2="320" y2="455" stroke="#E2E8F0" strokeWidth="1.5" strokeDasharray="6 4" />
 
-                {/* Pelvic Belt / Bridge Structure */}
-                <path
-                  d="M 105 75 Q 170 85 235 75"
-                  fill="none"
-                  stroke="#94A3B8"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                />
-                <circle cx="170" cy="80" r="4.5" fill="#64748B" />
-
-                {/* Femur Bones (Hip -> Knee) */}
-                {/* Left Femur (Viewer's Left) */}
-                <line
-                  x1="105"
-                  y1="75"
-                  x2="115"
-                  y2="200"
-                  stroke="#94A3B8"
-                  strokeWidth="5"
-                  strokeLinecap="round"
-                />
-                {/* Right Femur (Viewer's Right) */}
-                <line
-                  x1="235"
-                  y1="75"
-                  x2="225"
-                  y2="200"
-                  stroke="#94A3B8"
-                  strokeWidth="5"
-                  strokeLinecap="round"
-                />
-
-                {/* Tibia / Fibula Bones (Knee -> Ankle) */}
-                {/* Left Lower Leg */}
-                <line
-                  x1="115"
-                  y1="200"
-                  x2="110"
-                  y2="310"
-                  stroke="#94A3B8"
-                  strokeWidth="4.5"
-                  strokeLinecap="round"
-                />
-                {/* Right Lower Leg */}
-                <line
-                  x1="225"
-                  y1="200"
-                  x2="230"
-                  y2="310"
-                  stroke="#94A3B8"
-                  strokeWidth="4.5"
-                  strokeLinecap="round"
-                />
-
-                {/* Foot Bases */}
-                {/* Left Foot */}
-                <path
-                  d="M 110 310 L 80 340 L 125 340 Z"
-                  fill="#E2E8F0"
-                  stroke="#94A3B8"
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                />
-                {/* Right Foot */}
-                <path
-                  d="M 230 310 L 260 340 L 215 340 Z"
-                  fill="#E2E8F0"
-                  stroke="#94A3B8"
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                />
-
-                {/* Ground Line Reference */}
-                <line
-                  x1="50"
-                  y1="345"
-                  x2="290"
-                  y2="345"
-                  stroke="#E2E8F0"
-                  strokeWidth="2"
-                  strokeDasharray="5 4"
-                />
-
-                {/* Left & Right Side Anatomical Indicators */}
-                <text x="35" y="45" fill="#94A3B8" fontSize="11" fontWeight="700" textAnchor="middle">
+                {/* Anatomical Side Labels */}
+                <text x="35" y="32" fill="#94A3B8" fontSize="10" fontWeight="800" textAnchor="middle" letterSpacing="0.06em">
                   LEFT (L)
                 </text>
-                <text x="305" y="45" fill="#94A3B8" fontSize="11" fontWeight="700" textAnchor="middle">
+                <text x="325" y="32" fill="#94A3B8" fontSize="10" fontWeight="800" textAnchor="middle" letterSpacing="0.06em">
                   RIGHT (R)
                 </text>
 
-                {/* 1. Hip Joint Nodes */}
-                {/* Left Hip */}
+                {/* ========================================================
+                    BODY SEGMENT 1: HEAD & UPPER BODY
+                    ======================================================== */}
+                {/* Clavicle / Shoulder Girdle Bridge */}
+                <path
+                  d="M 115 92 Q 180 84 245 92"
+                  fill="none"
+                  stroke="url(#bone3DGrad)"
+                  strokeWidth="5.5"
+                  strokeLinecap="round"
+                  filter="url(#segmentShadow3D)"
+                />
+
+                {/* Cervical Spine (Neck) */}
+                <line
+                  x1="180"
+                  y1="66"
+                  x2="180"
+                  y2="92"
+                  stroke="url(#spineGrad)"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                />
+
+                {/* Shoulders Left & Right Beads */}
+                <circle cx="115" cy="92" r="6" fill="#94A3B8" stroke="#FFFFFF" strokeWidth="2" />
+                <circle cx="245" cy="92" r="6" fill="#94A3B8" stroke="#FFFFFF" strokeWidth="2" />
+
+                {/* Cranium / Head Node */}
                 <g
                   className="svg-joint-node"
-                  onClick={() => setSelectedParamId("hip_flexion")}
+                  onClick={() => setSelectedParamId("movement_quality")}
+                  onMouseEnter={() => setHoveredJoint(jointSchematicStates.head)}
+                  onMouseLeave={() => setHoveredJoint(null)}
                   style={{ cursor: "pointer" }}
                 >
                   <circle
-                    cx="105"
-                    cy="75"
+                    cx="180"
+                    cy="42"
                     r="24"
+                    fill={
+                      jointSchematicStates.head.tier === "HIGH"
+                        ? "url(#highRiskHalo)"
+                        : jointSchematicStates.head.tier === "MODERATE"
+                        ? "url(#modRiskHalo)"
+                        : "url(#safeRiskHalo)"
+                    }
+                  />
+                  <ellipse
+                    cx="180"
+                    cy="42"
+                    rx="17"
+                    ry="22"
+                    fill="url(#cranium3D)"
+                    stroke={jointSchematicStates.head.color}
+                    strokeWidth="2.5"
+                    filter="url(#segmentShadow3D)"
+                  />
+                  {/* Visor / Gaze line representing head alignment */}
+                  <path d="M 172 38 Q 180 43 188 38" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="180" cy="42" r="3" fill={jointSchematicStates.head.color} />
+                  <text x="180" y="22" fill="#334155" fontSize="9.5" fontWeight="800" textAnchor="middle">
+                    HEAD / UPPER
+                  </text>
+                </g>
+
+                {/* ========================================================
+                    BODY SEGMENT 2: TRUNK & SPINAL COLUMN
+                    ======================================================== */}
+                {/* Thoracic Rib Cage Contour (Translucent 3D Depth) */}
+                <path
+                  d="M 140 102 C 130 130, 130 155, 145 174 L 215 174 C 230 155, 230 130, 220 102 Z"
+                  fill="#F1F5F9"
+                  fillOpacity="0.45"
+                  stroke="#CBD5E1"
+                  strokeWidth="1.2"
+                  strokeDasharray="3 2"
+                />
+
+                {/* Spinal Column Axis */}
+                <line
+                  x1="180"
+                  y1="92"
+                  x2="180"
+                  y2="182"
+                  stroke="url(#spineGrad)"
+                  strokeWidth="4.5"
+                  strokeDasharray="6 3"
+                />
+
+                {/* Trunk Center-of-Mass Node */}
+                <g
+                  className="svg-joint-node"
+                  onClick={() => setSelectedParamId("landing_stability")}
+                  onMouseEnter={() => setHoveredJoint(jointSchematicStates.trunk)}
+                  onMouseLeave={() => setHoveredJoint(null)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <circle
+                    cx="180"
+                    cy="138"
+                    r="22"
+                    fill={
+                      jointSchematicStates.trunk.tier === "HIGH"
+                        ? "url(#highRiskHalo)"
+                        : jointSchematicStates.trunk.tier === "MODERATE"
+                        ? "url(#modRiskHalo)"
+                        : "url(#safeRiskHalo)"
+                    }
+                  />
+                  <circle
+                    cx="180"
+                    cy="138"
+                    r="9.5"
+                    fill={jointSchematicStates.trunk.color}
+                    stroke="#FFFFFF"
+                    strokeWidth="2.5"
+                    filter="url(#segmentShadow3D)"
+                  />
+                  <text x="180" y="130" fill="#475569" fontSize="9" fontWeight="800" textAnchor="middle">
+                    TRUNK
+                  </text>
+                  <text x="180" y="158" fill="#64748B" fontSize="8.5" fontWeight="700" textAnchor="middle">
+                    {jointSchematicStates.trunk.angle}
+                  </text>
+                </g>
+
+                {/* ========================================================
+                    BODY SEGMENT 3: HIPS & PELVIC GIRDLE
+                    ======================================================== */}
+                {/* 3D Pelvic Basin */}
+                <path
+                  d="M 120 182 Q 180 196 240 182 Q 180 174 120 182 Z"
+                  fill="#E2E8F0"
+                  stroke="#94A3B8"
+                  strokeWidth="2.5"
+                  filter="url(#segmentShadow3D)"
+                />
+                <circle cx="180" cy="186" r="4.5" fill="#64748B" />
+
+                {/* Left Hip Joint */}
+                <g
+                  className="svg-joint-node"
+                  onClick={() => setSelectedParamId("hip_flexion")}
+                  onMouseEnter={() => setHoveredJoint(jointSchematicStates.leftHip)}
+                  onMouseLeave={() => setHoveredJoint(null)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <circle
+                    cx="120"
+                    cy="182"
+                    r="25"
                     fill={
                       jointSchematicStates.leftHip.tier === "HIGH"
                         ? "url(#highRiskHalo)"
@@ -736,28 +922,35 @@ export default function AclRiskHeatmap() {
                     }
                   />
                   <circle
-                    cx="105"
-                    cy="75"
-                    r="10"
+                    cx="120"
+                    cy="182"
+                    r="10.5"
                     fill={jointSchematicStates.leftHip.color}
                     stroke="#FFFFFF"
                     strokeWidth="2.5"
+                    filter="url(#segmentShadow3D)"
                   />
-                  <text x="105" y="55" fill="#475569" fontSize="10" fontWeight="700" textAnchor="middle">
-                    L Hip ({jointSchematicStates.leftHip.angle})
+                  <circle cx="120" cy="182" r="3.5" fill="#FFFFFF" opacity="0.8" />
+                  <text x="88" y="180" fill="#334155" fontSize="9.5" fontWeight="800" textAnchor="end">
+                    L Hip
+                  </text>
+                  <text x="88" y="193" fill="#64748B" fontSize="8.5" fontWeight="600" textAnchor="end">
+                    {jointSchematicStates.leftHip.angle}
                   </text>
                 </g>
 
-                {/* Right Hip */}
+                {/* Right Hip Joint */}
                 <g
                   className="svg-joint-node"
                   onClick={() => setSelectedParamId("hip_flexion")}
+                  onMouseEnter={() => setHoveredJoint(jointSchematicStates.rightHip)}
+                  onMouseLeave={() => setHoveredJoint(null)}
                   style={{ cursor: "pointer" }}
                 >
                   <circle
-                    cx="235"
-                    cy="75"
-                    r="24"
+                    cx="240"
+                    cy="182"
+                    r="25"
                     fill={
                       jointSchematicStates.rightHip.tier === "HIGH"
                         ? "url(#highRiskHalo)"
@@ -767,29 +960,64 @@ export default function AclRiskHeatmap() {
                     }
                   />
                   <circle
-                    cx="235"
-                    cy="75"
-                    r="10"
+                    cx="240"
+                    cy="182"
+                    r="10.5"
                     fill={jointSchematicStates.rightHip.color}
                     stroke="#FFFFFF"
                     strokeWidth="2.5"
+                    filter="url(#segmentShadow3D)"
                   />
-                  <text x="235" y="55" fill="#475569" fontSize="10" fontWeight="700" textAnchor="middle">
-                    R Hip ({jointSchematicStates.rightHip.angle})
+                  <circle cx="240" cy="182" r="3.5" fill="#FFFFFF" opacity="0.8" />
+                  <text x="272" y="180" fill="#334155" fontSize="9.5" fontWeight="800" textAnchor="start">
+                    R Hip
+                  </text>
+                  <text x="272" y="193" fill="#64748B" fontSize="8.5" fontWeight="600" textAnchor="start">
+                    {jointSchematicStates.rightHip.angle}
                   </text>
                 </g>
 
-                {/* 2. Knee Joint Nodes (Primary ACL Risk Focus) */}
-                {/* Left Knee */}
+                {/* ========================================================
+                    FEMUR BONES (Hips -> Knees)
+                    ======================================================== */}
+                {/* Left Femur */}
+                <line
+                  x1="120"
+                  y1="182"
+                  x2="132"
+                  y2="305"
+                  stroke="url(#bone3DGrad)"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  filter="url(#segmentShadow3D)"
+                />
+                {/* Right Femur */}
+                <line
+                  x1="240"
+                  y1="182"
+                  x2="228"
+                  y2="305"
+                  stroke="url(#bone3DGrad)"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  filter="url(#segmentShadow3D)"
+                />
+
+                {/* ========================================================
+                    BODY SEGMENT 4: KNEES (PRIMARY ACL FOCUS)
+                    ======================================================== */}
+                {/* Left Knee Joint */}
                 <g
                   className="svg-joint-node"
                   onClick={() => setSelectedParamId("knee_valgus")}
+                  onMouseEnter={() => setHoveredJoint(jointSchematicStates.leftKnee)}
+                  onMouseLeave={() => setHoveredJoint(null)}
                   style={{ cursor: "pointer" }}
                 >
                   <circle
-                    cx="115"
-                    cy="200"
-                    r="32"
+                    cx="132"
+                    cy="305"
+                    r="34"
                     fill={
                       jointSchematicStates.leftKnee.tier === "HIGH"
                         ? "url(#highRiskHalo)"
@@ -798,33 +1026,56 @@ export default function AclRiskHeatmap() {
                         : "url(#safeRiskHalo)"
                     }
                   />
+
+                  {/* Pulsing ring on high risk */}
+                  {jointSchematicStates.leftKnee.tier === "HIGH" && (
+                    <circle
+                      cx="132"
+                      cy="305"
+                      r="24"
+                      fill="none"
+                      stroke="#EF4444"
+                      strokeWidth="2"
+                      opacity="0.8"
+                      className="pulsing-joint-ring"
+                    />
+                  )}
+
                   <circle
-                    cx="115"
-                    cy="200"
-                    r="13"
+                    cx="132"
+                    cy="305"
+                    r="13.5"
                     fill={jointSchematicStates.leftKnee.color}
                     stroke="#FFFFFF"
-                    strokeWidth="3"
+                    strokeWidth="3.5"
+                    filter="url(#segmentShadow3D)"
                   />
-                  <circle cx="115" cy="200" r="4.5" fill="#FFFFFF" opacity="0.9" />
-                  <text x="75" y="195" fill="#1E293B" fontSize="10" fontWeight="800" textAnchor="end">
+                  <circle cx="132" cy="305" r="4.5" fill="#FFFFFF" opacity="0.9" />
+
+                  {/* Labels */}
+                  <text x="88" y="300" fill="#0F172A" fontSize="10.5" fontWeight="800" textAnchor="end">
                     L Knee
                   </text>
-                  <text x="75" y="208" fill="#64748B" fontSize="9" fontWeight="600" textAnchor="end">
+                  <text x="88" y="313" fill="#64748B" fontSize="9" fontWeight="700" textAnchor="end">
                     Valg {jointSchematicStates.leftKnee.valgus}
+                  </text>
+                  <text x="88" y="324" fill="#64748B" fontSize="8.5" fontWeight="600" textAnchor="end">
+                    Flex {jointSchematicStates.leftKnee.flexion}
                   </text>
                 </g>
 
-                {/* Right Knee */}
+                {/* Right Knee Joint */}
                 <g
                   className="svg-joint-node"
                   onClick={() => setSelectedParamId("knee_valgus")}
+                  onMouseEnter={() => setHoveredJoint(jointSchematicStates.rightKnee)}
+                  onMouseLeave={() => setHoveredJoint(null)}
                   style={{ cursor: "pointer" }}
                 >
                   <circle
-                    cx="225"
-                    cy="200"
-                    r="32"
+                    cx="228"
+                    cy="305"
+                    r="34"
                     fill={
                       jointSchematicStates.rightKnee.tier === "HIGH"
                         ? "url(#highRiskHalo)"
@@ -833,34 +1084,104 @@ export default function AclRiskHeatmap() {
                         : "url(#safeRiskHalo)"
                     }
                   />
+
+                  {/* Pulsing ring on high risk */}
+                  {jointSchematicStates.rightKnee.tier === "HIGH" && (
+                    <circle
+                      cx="228"
+                      cy="305"
+                      r="24"
+                      fill="none"
+                      stroke="#EF4444"
+                      strokeWidth="2"
+                      opacity="0.8"
+                      className="pulsing-joint-ring"
+                    />
+                  )}
+
                   <circle
-                    cx="225"
-                    cy="200"
-                    r="13"
+                    cx="228"
+                    cy="305"
+                    r="13.5"
                     fill={jointSchematicStates.rightKnee.color}
                     stroke="#FFFFFF"
-                    strokeWidth="3"
+                    strokeWidth="3.5"
+                    filter="url(#segmentShadow3D)"
                   />
-                  <circle cx="225" cy="200" r="4.5" fill="#FFFFFF" opacity="0.9" />
-                  <text x="265" y="195" fill="#1E293B" fontSize="10" fontWeight="800" textAnchor="start">
+                  <circle cx="228" cy="305" r="4.5" fill="#FFFFFF" opacity="0.9" />
+
+                  {/* Labels */}
+                  <text x="272" y="300" fill="#0F172A" fontSize="10.5" fontWeight="800" textAnchor="start">
                     R Knee
                   </text>
-                  <text x="265" y="208" fill="#64748B" fontSize="9" fontWeight="600" textAnchor="start">
+                  <text x="272" y="313" fill="#64748B" fontSize="9" fontWeight="700" textAnchor="start">
                     Valg {jointSchematicStates.rightKnee.valgus}
+                  </text>
+                  <text x="272" y="324" fill="#64748B" fontSize="8.5" fontWeight="600" textAnchor="start">
+                    Flex {jointSchematicStates.rightKnee.flexion}
                   </text>
                 </g>
 
-                {/* 3. Ankle Joint Nodes */}
-                {/* Left Ankle */}
+                {/* ========================================================
+                    TIBIA & FIBULA BONES (Knees -> Ankles)
+                    ======================================================== */}
+                {/* Left Lower Leg */}
+                <line
+                  x1="132"
+                  y1="305"
+                  x2="126"
+                  y2="415"
+                  stroke="url(#bone3DGrad)"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  filter="url(#segmentShadow3D)"
+                />
+                {/* Right Lower Leg */}
+                <line
+                  x1="228"
+                  y1="305"
+                  x2="234"
+                  y2="415"
+                  stroke="url(#bone3DGrad)"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  filter="url(#segmentShadow3D)"
+                />
+
+                {/* ========================================================
+                    BODY SEGMENT 5: ANKLES & FEET
+                    ======================================================== */}
+                {/* Left Foot Base Wedge */}
+                <path
+                  d="M 126 415 L 90 450 L 140 450 Z"
+                  fill="#E2E8F0"
+                  stroke="#94A3B8"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                  filter="url(#segmentShadow3D)"
+                />
+                {/* Right Foot Base Wedge */}
+                <path
+                  d="M 234 415 L 270 450 L 220 450 Z"
+                  fill="#E2E8F0"
+                  stroke="#94A3B8"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                  filter="url(#segmentShadow3D)"
+                />
+
+                {/* Left Ankle Joint */}
                 <g
                   className="svg-joint-node"
                   onClick={() => setSelectedParamId("ankle_dorsiflexion")}
+                  onMouseEnter={() => setHoveredJoint(jointSchematicStates.leftAnkle)}
+                  onMouseLeave={() => setHoveredJoint(null)}
                   style={{ cursor: "pointer" }}
                 >
                   <circle
-                    cx="110"
-                    cy="310"
-                    r="20"
+                    cx="126"
+                    cy="415"
+                    r="22"
                     fill={
                       jointSchematicStates.leftAnkle.tier === "HIGH"
                         ? "url(#highRiskHalo)"
@@ -870,28 +1191,31 @@ export default function AclRiskHeatmap() {
                     }
                   />
                   <circle
-                    cx="110"
-                    cy="310"
-                    r="8.5"
+                    cx="126"
+                    cy="415"
+                    r="9"
                     fill={jointSchematicStates.leftAnkle.color}
                     stroke="#FFFFFF"
-                    strokeWidth="2"
+                    strokeWidth="2.5"
+                    filter="url(#segmentShadow3D)"
                   />
-                  <text x="110" y="360" fill="#475569" fontSize="9.5" fontWeight="700" textAnchor="middle">
+                  <text x="126" y="472" fill="#475569" fontSize="9" fontWeight="700" textAnchor="middle">
                     L Ankle ({jointSchematicStates.leftAnkle.angle})
                   </text>
                 </g>
 
-                {/* Right Ankle */}
+                {/* Right Ankle Joint */}
                 <g
                   className="svg-joint-node"
                   onClick={() => setSelectedParamId("ankle_dorsiflexion")}
+                  onMouseEnter={() => setHoveredJoint(jointSchematicStates.rightAnkle)}
+                  onMouseLeave={() => setHoveredJoint(null)}
                   style={{ cursor: "pointer" }}
                 >
                   <circle
-                    cx="230"
-                    cy="310"
-                    r="20"
+                    cx="234"
+                    cy="415"
+                    r="22"
                     fill={
                       jointSchematicStates.rightAnkle.tier === "HIGH"
                         ? "url(#highRiskHalo)"
@@ -901,22 +1225,56 @@ export default function AclRiskHeatmap() {
                     }
                   />
                   <circle
-                    cx="230"
-                    cy="310"
-                    r="8.5"
+                    cx="234"
+                    cy="415"
+                    r="9"
                     fill={jointSchematicStates.rightAnkle.color}
                     stroke="#FFFFFF"
-                    strokeWidth="2"
+                    strokeWidth="2.5"
+                    filter="url(#segmentShadow3D)"
                   />
-                  <text x="230" y="360" fill="#475569" fontSize="9.5" fontWeight="700" textAnchor="middle">
+                  <text x="234" y="472" fill="#475569" fontSize="9" fontWeight="700" textAnchor="middle">
                     R Ankle ({jointSchematicStates.rightAnkle.angle})
                   </text>
                 </g>
               </svg>
+
+              {/* Floating Joint Hover Tooltip */}
+              {hoveredJoint && (
+                <div
+                  className="biomech-hover-tooltip"
+                  style={{
+                    position: "absolute",
+                    top: "14px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    background: "rgba(15, 23, 42, 0.92)",
+                    color: "white",
+                    padding: "8px 14px",
+                    borderRadius: "10px",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    pointerEvents: "none",
+                    boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+                    zIndex: 10,
+                    backdropFilter: "blur(6px)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    textAlign: "center",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <div style={{ fontWeight: 800, color: hoveredJoint.color }}>
+                    {hoveredJoint.name} • {hoveredJoint.tier} RISK
+                  </div>
+                  <div style={{ color: "#CBD5E1", fontSize: "11px", marginTop: "2px" }}>
+                    {hoveredJoint.target}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Selected Joint / Parameter Quick Insight Popover Card */}
-            <div className="biomech-popover-card">
+            <div className="biomech-popover-card card-3d">
               <div className="popover-card-top">
                 <div className="popover-title-row">
                   <div
@@ -950,19 +1308,19 @@ export default function AclRiskHeatmap() {
         <div className="biomech-heatmap-footer">
           <div className="biomech-legend-items">
             <div className="biomech-legend-item">
-              <span className="legend-marker safe" />
+              <span className="legend-marker safe" style={{ background: "#0284C7" }} />
               <span>
                 <b>SAFE / LOW RISK</b> (&lt; 30% Intensity)
               </span>
             </div>
             <div className="biomech-legend-item">
-              <span className="legend-marker mod" />
+              <span className="legend-marker mod" style={{ background: "#F59E0B" }} />
               <span>
                 <b>MODERATE / CAUTION</b> (30% – 60% Intensity)
               </span>
             </div>
             <div className="biomech-legend-item">
-              <span className="legend-marker high" />
+              <span className="legend-marker high" style={{ background: "#EF4444" }} />
               <span>
                 <b>HIGH RISK</b> (&gt; 60% Intensity)
               </span>
@@ -970,7 +1328,7 @@ export default function AclRiskHeatmap() {
           </div>
 
           <div className="biomech-disclaimer">
-            <ShieldCheck size={15} color="#2563EB" />
+            <ShieldCheck size={15} color="#0284C7" />
             <span>
               Risk intensity is calculated from biomechanical measurements extracted during movement analysis.
               Intended for athletic biomechanics assessment; not a medical diagnosis.
@@ -981,3 +1339,4 @@ export default function AclRiskHeatmap() {
     </section>
   );
 }
+

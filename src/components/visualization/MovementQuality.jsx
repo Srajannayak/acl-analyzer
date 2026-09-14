@@ -86,18 +86,24 @@ export default function MovementQuality() {
   return (
     <section className="section-container">
       <div className="section-title-wrapper">
-        <h2 className="section-title">
-          <ShieldCheck size={24} color="#2563EB" />
-          Movement Quality Assessment
-        </h2>
-        <span style={{ fontSize: "13px", color: "#64748B", fontWeight: 600 }}>
-          Biomechanical Control Criteria
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div className="section-title-icon-box">
+            <ShieldCheck size={22} color="#0284c7" />
+          </div>
+          <div>
+            <h2 className="section-title" style={{ margin: 0 }}>
+              Movement Quality Assessment
+            </h2>
+            <span style={{ fontSize: "13px", color: "#64748b", fontWeight: 600 }}>
+              Clinical Biomechanical Control Criteria
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="movement-quality-grid">
         {qualityItems.map((item, idx) => (
-          <div className="quality-card" key={idx}>
+          <div className="quality-card card-3d" key={idx}>
             <div className="quality-header">
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 {item.icon}
@@ -114,3 +120,4 @@ export default function MovementQuality() {
     </section>
   );
 }
+

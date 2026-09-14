@@ -1,41 +1,167 @@
 /* ============================================================
-   DASHBOARD & VISUALIZATION STYLES (ENHANCED SPORTS ANALYTICS)
+   DASHBOARD & VISUALIZATION STYLES (MEDICAL AI & BIOMECHANICS)
    ============================================================ */
 
 .dashboard {
-  padding-top: 30px;
+  padding-top: 24px;
   padding-bottom: 60px;
 }
 
-.dashboard-header {
-  margin-bottom: 30px;
+/* ============================================================
+   3D CARD INTERACTIONS & ELEVATION
+   ============================================================ */
+
+.card-3d {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px -4px rgba(2, 132, 199, 0.05), 0 2px 8px -2px rgba(15, 23, 42, 0.03);
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  will-change: transform;
 }
 
-.dashboard-header span {
-  display: inline-block;
-  padding: 8px 18px;
-  background: #EEF5FF;
-  color: #2563EB;
-  border-radius: 50px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  margin-bottom: 14px;
+.card-3d:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px -6px rgba(2, 132, 199, 0.11), 0 6px 16px -2px rgba(15, 23, 42, 0.04);
+  border-color: #bae6fd;
 }
 
-.dashboard-header h1 {
-  font-size: 42px;
-  font-weight: 800;
+@media (prefers-reduced-motion: reduce) {
+  .card-3d,
+  .card-3d:hover {
+    transform: none !important;
+  }
+}
+
+/* ============================================================
+   DASHBOARD HERO SECTION
+   ============================================================ */
+
+.dashboard-hero-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 55%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: 24px;
+  padding: 34px 38px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 12px 32px -6px rgba(2, 132, 199, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+}
+
+.hero-content-left {
+  position: relative;
+  z-index: 2;
+  max-width: 780px;
+}
+
+.hero-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 12px;
-  color: #0F172A;
-  letter-spacing: -0.02em;
 }
 
-.dashboard-header p {
-  font-size: 17px;
-  color: #64748B;
-  max-width: 760px;
-  line-height: 28px;
+.hero-medical-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #ffffff;
+  border: 1px solid #bae6fd;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0284c7;
+  letter-spacing: 0.06em;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.08);
+}
+
+.hero-version-badge {
+  padding: 6px 12px;
+  background: rgba(2, 132, 199, 0.08);
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0369a1;
+}
+
+.hero-headline {
+  font-size: 32px;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+  line-height: 1.25;
+}
+
+.hero-description {
+  font-size: 15px;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.hero-tech-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+}
+
+.hero-abstract-art {
+  position: absolute;
+  right: -20px;
+  top: -20px;
+  width: 320px;
+  height: 120%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.abstract-glow-orb.primary {
+  position: absolute;
+  right: 50px;
+  top: 30px;
+  width: 150px;
+  height: 150px;
+  background: rgba(2, 132, 199, 0.16);
+  filter: blur(55px);
+  border-radius: 50%;
+}
+
+.abstract-glow-orb.cyan {
+  position: absolute;
+  right: 120px;
+  bottom: 20px;
+  width: 130px;
+  height: 130px;
+  background: rgba(56, 189, 248, 0.18);
+  filter: blur(50px);
+  border-radius: 50%;
+}
+
+.abstract-grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(2, 132, 199, 0.2) 1.5px, transparent 1.5px);
+  background-size: 20px 20px;
+  opacity: 0.35;
 }
 
 /* ============================================================
@@ -43,59 +169,75 @@
    ============================================================ */
 
 .athlete-overview-card {
-  background: white;
-  border-radius: 24px;
-  padding: 26px 32px;
-  margin-bottom: 32px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-  border: 1px solid #EEF2F6;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px 30px;
+  margin-bottom: 28px;
+  border: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;
-  transition: all 0.3s ease;
-}
-
-.athlete-overview-card:hover {
-  box-shadow: 0 15px 35px rgba(37, 99, 235, 0.08);
 }
 
 .overview-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
 }
 
 .overview-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
-  background: #EEF5FF;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563EB;
+  color: #0284c7;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
 }
 
 .overview-details h3 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #0F172A;
-  margin-bottom: 6px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
 }
 
 .overview-meta {
   display: flex;
   align-items: center;
-  gap: 16px;
-  color: #64748B;
-  font-size: 14px;
+  gap: 14px;
+  color: #64748b;
+  font-size: 13px;
   flex-wrap: wrap;
 }
 
 .overview-meta span b {
   color: #334155;
+}
+
+.overview-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 9999px;
+  color: #166534;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.status-dot-active {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
 }
 
 .overview-right {
@@ -104,33 +246,72 @@
   gap: 14px;
 }
 
+/* Risk Badges (Medical AI Colors) */
 .risk-pill {
-  padding: 10px 22px;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.02em;
+  padding: 9px 20px;
+  border-radius: 9999px;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.03em;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .risk-pill.low {
-  background: #ECFDF5;
-  color: #059669;
-  border: 1px solid #A7F3D0;
+  background: #f0f9ff;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.15);
 }
 
 .risk-pill.moderate {
-  background: #FFFBEB;
-  color: #D97706;
-  border: 1px solid #FDE68A;
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fde68a;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
 }
 
 .risk-pill.high {
-  background: #FEF2F2;
-  color: #DC2626;
-  border: 1px solid #FECACA;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+}
+
+/* ============================================================
+   PRIMARY & SECONDARY BUTTONS
+   ============================================================ */
+
+.export-btn,
+.analyze-btn {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px -2px rgba(2, 132, 199, 0.35);
+  transition: all 0.25s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.export-btn:hover,
+.analyze-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px -4px rgba(2, 132, 199, 0.45);
+  background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+}
+
+.export-btn:active,
+.analyze-btn:active {
+  transform: translateY(0px) scale(0.98);
 }
 
 /* ============================================================
@@ -139,63 +320,136 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1.8fr 1.2fr;
-  gap: 28px;
-  margin-bottom: 35px;
+  grid-template-columns: 1.75fr 1.25fr;
+  gap: 26px;
+  margin-bottom: 32px;
 }
 
 /* ============================================================
-   VIDEO PANEL
+   VIDEO PANEL & AI HUD SCANNER
    ============================================================ */
 
 .video-panel-wrapper {
-  background: white;
-  border-radius: 24px;
-  padding: 28px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-  border: 1px solid #EEF2F6;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
 }
 
 .video-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
-.video-header h2 {
-  font-size: 20px;
-  font-weight: 700;
-  color: #0F172A;
+.video-header-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.video-tag {
-  background: #EEF5FF;
-  color: #2563EB;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  justify-content: center;
 }
 
 .video-container {
   position: relative;
-  border-radius: 18px;
+  border-radius: 16px;
   overflow: hidden;
-  background: #0F172A;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  background: #0f172a;
+  border: 1px solid #bae6fd;
+  box-shadow: 0 10px 28px rgba(2, 132, 199, 0.1);
 }
 
 .video-player {
   width: 100%;
   max-height: 480px;
   display: block;
-  background: #000;
+  background: #000000;
 }
+
+/* AI Scan Line Animation */
+@keyframes scanLine {
+  0% {
+    top: 0%;
+    opacity: 0.8;
+  }
+  50% {
+    top: 96%;
+    opacity: 1;
+  }
+  100% {
+    top: 0%;
+    opacity: 0.8;
+  }
+}
+
+.ai-scanner-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.9) 50%, transparent 100%);
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.8);
+  animation: scanLine 3.2s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* HUD Corner Brackets */
+.hud-bracket {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: rgba(56, 189, 248, 0.7);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.hud-bracket.top-left {
+  top: 12px;
+  left: 12px;
+  border-width: 2px 0 0 2px;
+  border-top-left-radius: 4px;
+}
+
+.hud-bracket.top-right {
+  top: 12px;
+  right: 12px;
+  border-width: 2px 2px 0 0;
+  border-top-right-radius: 4px;
+}
+
+.hud-bracket.bottom-left {
+  bottom: 12px;
+  left: 12px;
+  border-width: 0 0 2px 2px;
+  border-bottom-left-radius: 4px;
+}
+
+.hud-bracket.bottom-right {
+  bottom: 12px;
+  right: 12px;
+  border-width: 0 2px 2px 0;
+  border-bottom-right-radius: 4px;
+}
+
+@keyframes beaconPulse {
+  0% { transform: scale(0.9); opacity: 0.9; }
+  50% { transform: scale(1.3); opacity: 0.4; }
+  100% { transform: scale(0.9); opacity: 0.9; }
+}
+
+.scanner-beacon {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38bdf8;
+  display: inline-block;
+  animation: beaconPulse 1.4s infinite ease-in-out;
+}
+
 
 .pose-legend {
   margin-top: 14px;
@@ -271,7 +525,7 @@
 }
 
 /* ============================================================
-   RISK VISUALIZATION PANEL
+   RISK VISUALIZATION PANEL & CIRCULAR RISK GAUGE
    ============================================================ */
 
 .risk-panel-container {
@@ -281,89 +535,34 @@
 }
 
 .risk-overview-box {
-  background: white;
-  border-radius: 24px;
-  padding: 28px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-  border: 1px solid #EEF2F6;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 26px 24px 22px;
   text-align: center;
-}
-
-.risk-score-display {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 16px 0 20px;
-}
-
-.risk-score-number {
-  font-size: 56px;
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  margin-bottom: 6px;
-}
-
-.risk-score-number.low {
-  color: #059669;
-}
-
-.risk-score-number.moderate {
-  color: #D97706;
-}
-
-.risk-score-number.high {
-  color: #DC2626;
-}
-
-.risk-score-label {
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* Segmented Risk Gauge */
-.risk-gauge-bar {
-  width: 100%;
-  height: 10px;
-  background: #E2E8F0;
-  border-radius: 10px;
   position: relative;
-  margin: 18px 0 10px;
-  overflow: hidden;
+}
+
+.risk-badge-header {
   display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
 }
 
-.gauge-segment {
-  height: 100%;
-  transition: opacity 0.3s ease;
-}
-
-.gauge-segment.low {
-  width: 30%;
-  background: #10B981;
-}
-
-.gauge-segment.moderate {
-  width: 30%;
-  background: #F59E0B;
-}
-
-.gauge-segment.high {
-  width: 40%;
-  background: #EF4444;
-}
-
-.gauge-labels {
-  display: flex;
-  justify-content: space-between;
+.medical-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 9999px;
   font-size: 11px;
   font-weight: 700;
-  color: #94A3B8;
-  letter-spacing: 0.02em;
+  color: #0369a1;
+  letter-spacing: 0.03em;
 }
 
+/* 4 Detailed Breakdown Mini Cards with 3D Elevation */
 .risk-cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -371,46 +570,95 @@
 }
 
 .risk-mini-card {
-  background: white;
-  border-radius: 18px;
-  padding: 18px;
-  border: 1px solid #EEF2F6;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  transition: all 0.2s ease;
-}
-
-.risk-mini-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.08);
+  gap: 12px;
 }
 
 .mini-icon-wrapper {
   width: 38px;
   height: 38px;
-  border-radius: 12px;
-  background: #EEF5FF;
-  color: #2563EB;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
-.risk-mini-card h4 {
-  font-size: 13px;
-  color: #64748B;
+.mini-icon-wrapper.blue {
+  background: #f0f9ff;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+}
+
+.mini-icon-wrapper.cyan {
+  background: #ecfeff;
+  color: #0891b2;
+  border: 1px solid #a5f3fc;
+}
+
+.mini-icon-wrapper.emerald {
+  background: #f0fdf4;
+  color: #059669;
+  border: 1px solid #bbf7d0;
+}
+
+.mini-icon-wrapper.violet {
+  background: #eef2ff;
+  color: #4f46e5;
+  border: 1px solid #c7d2fe;
+}
+
+.mini-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-content h4 {
+  font-size: 12px;
+  color: #64748b;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
-.risk-mini-card h2 {
-  font-size: 22px;
+.mini-content h2 {
+  font-size: 19px;
   font-weight: 800;
-  color: #0F172A;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
 }
+
+.mini-subtext {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Biomechanical Body Joint Pulse Glow */
+@keyframes pulseGlow {
+  0% {
+    r: 22px;
+    opacity: 0.8;
+  }
+  50% {
+    r: 32px;
+    opacity: 0.15;
+  }
+  100% {
+    r: 22px;
+    opacity: 0.8;
+  }
+}
+
+.pulsing-joint-ring {
+  animation: pulseGlow 1.8s infinite ease-in-out;
+  transform-origin: center;
+}
+
 
 /* ============================================================
    BIOMECHANICAL METRICS SECTION
@@ -481,27 +729,42 @@
   font-weight: 500;
 }
 
+.section-title-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.08);
+}
+
 .metric-status-badge {
   font-size: 11px;
   font-weight: 700;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 9999px;
   letter-spacing: 0.02em;
 }
 
 .metric-status-badge.optimal {
-  background: #ECFDF5;
-  color: #059669;
+  background: #f0f9ff;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
 }
 
 .metric-status-badge.attention {
-  background: #FFFBEB;
-  color: #D97706;
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fde68a;
 }
 
 .metric-status-badge.alert {
-  background: #FEF2F2;
-  color: #DC2626;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
 }
 
 .metric-value-row {
@@ -512,11 +775,12 @@
 }
 
 .metric-value-large {
-  font-size: 34px;
-  font-weight: 800;
-  color: #0F172A;
-  letter-spacing: -0.02em;
+  font-size: 32px;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.03em;
 }
+
 
 /* ============================================================
    MOVEMENT QUALITY ASSESSMENT (PHASE 5)

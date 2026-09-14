@@ -40,6 +40,11 @@ export default defineConfig({
       "/report": {
         target: "http://127.0.0.1:5000",
         changeOrigin: true,
+        bypass: (req) => {
+          if (req.headers.accept && req.headers.accept.includes("text/html")) {
+            return "/index.html";
+          }
+        },
       },
     },
   },

@@ -76,17 +76,23 @@ export default function MovementScoreRadar({ onSeekToTimestamp = null }) {
   return (
     <section className="section-container">
       <div className="section-title-wrapper">
-        <h2 className="section-title">
-          <Award size={24} color="#2563EB" />
-          Athlete Movement Quality Score & Radar Profile
-        </h2>
-        <span style={{ fontSize: "13px", color: "#64748B", fontWeight: 600 }}>
-          Comprehensive 5-Axis Dynamic Evaluation
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div className="section-title-icon-box">
+            <Award size={22} color="#0284c7" />
+          </div>
+          <div>
+            <h2 className="section-title" style={{ margin: 0 }}>
+              Athlete Movement Quality Score &amp; Radar Profile
+            </h2>
+            <span style={{ fontSize: "13px", color: "#64748b", fontWeight: 600 }}>
+              Comprehensive 5-Axis Dynamic Evaluation
+            </span>
+          </div>
+        </div>
       </div>
 
       <div
-        className="athlete-overview-card"
+        className="athlete-overview-card card-3d"
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1.2fr",
@@ -100,28 +106,47 @@ export default function MovementScoreRadar({ onSeekToTimestamp = null }) {
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <div
             style={{
-              background: "#F8FAFC",
+              background: "#f0f9ff",
               borderRadius: "18px",
               padding: "20px",
               textAlign: "center",
-              border: "1px solid #EEF2F6",
+              border: "1px solid #bae6fd",
             }}
           >
-            <span style={{ fontSize: "13px", fontWeight: 700, color: "#64748B", textTransform: "uppercase" }}>
+            <span style={{ fontSize: "12px", fontWeight: 800, color: "#0369a1", textTransform: "uppercase", letterSpacing: "0.04em" }}>
               Derived Movement Score
             </span>
-            <div style={{ fontSize: "52px", fontWeight: 900, color: scores.overallScore >= 75 ? "#059669" : scores.overallScore >= 55 ? "#D97706" : "#DC2626", margin: "6px 0" }}>
-              {scores.overallScore} <span style={{ fontSize: "22px", color: "#94A3B8" }}>/ 100</span>
+            <div
+              style={{
+                fontSize: "52px",
+                fontWeight: 900,
+                color: scores.overallScore >= 75 ? "#0284c7" : scores.overallScore >= 55 ? "#f59e0b" : "#ef4444",
+                margin: "6px 0",
+                letterSpacing: "-0.04em",
+              }}
+            >
+              {scores.overallScore} <span style={{ fontSize: "20px", color: "#94a3b8", fontWeight: 600 }}>/ 100</span>
             </div>
-            <span style={{ fontSize: "13px", fontWeight: 600, color: "#475569" }}>
-              {scores.overallScore >= 75 ? "Optimal Biomechanical Mechanics" : scores.overallScore >= 55 ? "Moderate Movement Efficiency" : "Elevated Risk Pattern"}
+            <span
+              style={{
+                display: "inline-block",
+                fontSize: "12px",
+                fontWeight: 700,
+                padding: "3px 12px",
+                borderRadius: "9999px",
+                background: "#ffffff",
+                border: "1px solid #bae6fd",
+                color: scores.overallScore >= 75 ? "#0284c7" : scores.overallScore >= 55 ? "#d97706" : "#dc2626",
+              }}
+            >
+              {scores.overallScore >= 75 ? "Optimal Biomechanical Cushion" : scores.overallScore >= 55 ? "Moderate Movement Efficiency" : "Elevated Impact Risk"}
             </span>
           </div>
 
           {/* Movement Phase Buttons */}
           <div>
             <h4 style={{ fontSize: "13px", fontWeight: 700, color: "#334155", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
-              <Layers size={15} color="#2563EB" />
+              <Layers size={15} color="#0284c7" />
               Jump to Movement Phase
             </h4>
             <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
@@ -136,10 +161,10 @@ export default function MovementScoreRadar({ onSeekToTimestamp = null }) {
                   key={phase.id}
                   onClick={() => handlePhaseClick(phase.id)}
                   style={{
-                    background: "#EEF5FF",
-                    color: "#2563EB",
-                    border: "1px solid #BFDBFE",
-                    padding: "6px 10px",
+                    background: "#f0f9ff",
+                    color: "#0284c7",
+                    border: "1px solid #bae6fd",
+                    padding: "6px 12px",
                     borderRadius: "8px",
                     fontSize: "12px",
                     fontWeight: 700,
@@ -158,29 +183,30 @@ export default function MovementScoreRadar({ onSeekToTimestamp = null }) {
         <div style={{ height: "300px", width: "100%" }}>
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart data={scores.radarData} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
-              <PolarGrid stroke="#E2E8F0" />
+              <PolarGrid stroke="#e2e8f0" />
               <PolarAngleAxis dataKey="subject" tick={{ fill: "#334155", fontSize: 11, fontWeight: 700 }} />
-              <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: "#94A3B8", fontSize: 10 }} />
+              <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: "#94a3b8", fontSize: 10 }} />
               <Radar
                 name="Athlete Profile"
                 dataKey="athlete"
-                stroke="#2563EB"
-                fill="#3B82F6"
-                fillOpacity={0.45}
+                stroke="#0284c7"
+                fill="#38bdf8"
+                fillOpacity={0.4}
               />
               <Radar
                 name="Ideal Reference"
                 dataKey="ideal"
-                stroke="#10B981"
-                fill="#10B981"
-                fillOpacity={0.1}
+                stroke="#0ea5e9"
+                fill="#0ea5e9"
+                fillOpacity={0.08}
                 strokeDasharray="3 3"
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#FFFFFF",
+                  backgroundColor: "#ffffff",
                   borderRadius: "10px",
-                  border: "1px solid #E2E8F0",
+                  border: "1px solid #bae6fd",
+                  boxShadow: "0 4px 12px rgba(2, 132, 199, 0.1)",
                   fontSize: "12px",
                 }}
               />
@@ -191,3 +217,4 @@ export default function MovementScoreRadar({ onSeekToTimestamp = null }) {
     </section>
   );
 }
+

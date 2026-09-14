@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Brain, LoaderCircle } from "lucide-react";
+import {
+  Brain,
+  LoaderCircle,
+  Activity,
+  Compass,
+  ShieldAlert,
+  Sparkles,
+  CheckCircle2,
+  Clock,
+  ArrowRight,
+  Video,
+} from "lucide-react";
 
 import { uploadVideo } from "../../services/api";
 import { useAnalysis } from "../../context/AnalysisContext";
@@ -13,14 +24,45 @@ import {
 import "../../styles/processing.css";
 
 const STAGES = [
-  { threshold: 0, message: "Uploading video to server..." },
-  { threshold: 18, message: "Extracting video frames..." },
+  { threshold: 0, message: "Uploading video to analysis server..." },
+  { threshold: 18, message: "Extracting video frames and ground plane..." },
   { threshold: 38, message: "Running MediaPipe 33-point pose estimation..." },
-  { threshold: 58, message: "Extracting biomechanical joint angles..." },
-  { threshold: 72, message: "Detecting landing event & impact window..." },
-  { threshold: 84, message: "Predicting ACL injury risk with ML model..." },
-  { threshold: 92, message: "Encoding processed video with skeleton overlay..." },
+  { threshold: 58, message: "Extracting dynamic joint angles (flexion, valgus, symmetry)..." },
+  { threshold: 72, message: "Detecting impact frame and peak deceleration window..." },
+  { threshold: 84, message: "Evaluating ACL injury risk with Random Forest ML..." },
+  { threshold: 92, message: "Generating skeletal overlay video and telemetry..." },
   { threshold: 100, message: "Analysis complete! Finalizing dashboard..." },
+];
+
+const CHECKLIST_STAGES = [
+  {
+    id: "video",
+    threshold: 22,
+    title: "Processing video",
+    detail: "Decoding frames and ground plane timeline",
+    icon: Video,
+  },
+  {
+    id: "pose",
+    threshold: 48,
+    title: "Detecting pose landmarks",
+    detail: "Tracking 33 body landmarks across frames",
+    icon: Activity,
+  },
+  {
+    id: "features",
+    threshold: 74,
+    title: "Extracting biomechanical features",
+    detail: "Measuring knee flexion, valgus & symmetry",
+    icon: Compass,
+  },
+  {
+    id: "risk",
+    threshold: 95,
+    title: "Calculating ACL risk",
+    detail: "Predicting risk category via calibrated ML model",
+    icon: ShieldAlert,
+  },
 ];
 
 export default function ProcessingLoader() {
@@ -28,7 +70,7 @@ export default function ProcessingLoader() {
   const location = useLocation();
   const { selectedVideo, setAnalysisResult } = useAnalysis();
 
-  const [progress, setProgress] = useState(8);
+  const [progress, setProgress] = useState(12);
   const [currentMessage, setCurrentMessage] = useState(STAGES[0].message);
   const [error, setError] = useState("");
 
@@ -50,10 +92,9 @@ export default function ProcessingLoader() {
     console.log("[ACL] ProcessingLoader mounted for video:", videoToProcess.name);
 
     // Easing progress animation up to 92%
-    let currentPct = 8;
+    let currentPct = 12;
     progressTimer = setInterval(() => {
       if (currentPct < 92) {
-        // Slow down slightly as progress increases to maintain a smooth experience
         const increment = currentPct < 50 ? 2 : 1;
         currentPct = Math.min(92, currentPct + increment);
         setProgress(currentPct);
@@ -100,8 +141,8 @@ export default function ProcessingLoader() {
 
         setTimeout(() => {
           if (!isCancelled) {
-            console.log("[ACL] Navigating to /visualization with analysis data.");
-            navigate("/visualization");
+            console.log("[ACL] Navigating to /dashboard with analysis data.");
+            navigate("/dashboard");
           }
         }, 500);
       })
@@ -110,7 +151,6 @@ export default function ProcessingLoader() {
 
         console.error("[ACL] Backend analysis error:", err);
 
-        // Clear active promise on error so user can retry
         setActiveAnalysisPromise(null);
 
         if (progressTimer) {
@@ -145,90 +185,163 @@ export default function ProcessingLoader() {
     };
   }, [selectedVideo, location.state, navigate, setAnalysisResult]);
 
-  /*
-   * Error state
-   */
   if (error) {
     return (
-      <section className="processing">
+      <section className="processing-container">
+        <div className="processing-card error-card">
+          <div className="error-icon-box">
+            <Brain size={44} />
+          </div>
 
-        <div className="processing-card">
-
-          <Brain
-            className="brain-icon"
-            size={65}
-          />
-
-          <h1>Analysis Failed</h1>
-
-          <p>
-            {error}
-          </p>
+          <h2>Analysis Failed</h2>
+          <p className="error-desc">{error}</p>
 
           <button
             onClick={() => {
               clearStoredVideo();
               navigate("/upload");
             }}
-            className="analyze-btn"
+            className="retry-btn"
           >
-            Try Again
+            Upload Another Video
           </button>
-
         </div>
-
       </section>
     );
   }
 
   return (
-    <section className="processing">
-
+    <section className="processing-container">
       <div className="processing-card">
-
-        <Brain
-          className="brain-icon"
-          size={65}
-        />
-
-        <h1>
-          AI Analysis in Progress
-        </h1>
-
-        <p>
-          Please wait while our AI analyzes the athlete's biomechanics.
-        </p>
-
-        <div className="loader-wrapper">
-
-          <LoaderCircle
-            className="loader-icon"
-            size={55}
-          />
-
+        {/* Top Header */}
+        <div className="processing-header">
+          <span className="processing-badge">
+            <span className="badge-pulse-dot" />
+            AI BIOMECHANICAL ANALYSIS
+          </span>
+          <h1>Analyzing Your Landing</h1>
+          <p>
+            AI-powered kinematic estimation and joint deceleration assessment in progress
+          </p>
         </div>
 
-        <div className="progress-bar">
+        {/* Central Animated Biomechanical AI Skeleton Visualization */}
+        <div className="processing-viz-wrapper">
+          <div className="laser-scanner-line" />
 
-          <div
-            className="progress-fill"
-            style={{
-              width: `${progress}%`,
-            }}
-          ></div>
+          <svg
+            viewBox="0 0 280 260"
+            className="ai-skeleton-svg"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <defs>
+              <linearGradient id="procBoneGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#38bdf8" />
+                <stop offset="100%" stopColor="#2F6FAF" />
+              </linearGradient>
+              <filter id="procGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#2F6FAF" floodOpacity="0.7" />
+              </filter>
+            </defs>
 
+            {/* Impact ground plane */}
+            <ellipse cx="140" cy="242" rx="90" ry="12" fill="none" stroke="#bae6fd" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.8" />
+            <line x1="40" y1="242" x2="240" y2="242" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 3" />
+
+            {/* Spine & Torso */}
+            <line x1="140" y1="48" x2="140" y2="120" stroke="url(#procBoneGrad)" strokeWidth="6" strokeLinecap="round" />
+
+            {/* Shoulders */}
+            <line x1="95" y1="62" x2="185" y2="62" stroke="url(#procBoneGrad)" strokeWidth="4.5" strokeLinecap="round" />
+            {/* Arms */}
+            <line x1="95" y1="62" x2="75" y2="105" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
+            <line x1="75" y1="105" x2="65" y2="145" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
+            <line x1="185" y1="62" x2="205" y2="105" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
+            <line x1="205" y1="105" x2="215" y2="145" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
+
+            {/* Pelvis bar */}
+            <line x1="110" y1="120" x2="170" y2="120" stroke="#2F6FAF" strokeWidth="6" strokeLinecap="round" />
+
+            {/* Left Leg */}
+            <line x1="110" y1="120" x2="100" y2="175" stroke="url(#procBoneGrad)" strokeWidth="5.5" strokeLinecap="round" />
+            <line x1="100" y1="175" x2="95" y2="235" stroke="url(#procBoneGrad)" strokeWidth="5" strokeLinecap="round" />
+
+            {/* Right Leg */}
+            <line x1="170" y1="120" x2="180" y2="175" stroke="url(#procBoneGrad)" strokeWidth="5.5" strokeLinecap="round" />
+            <line x1="180" y1="175" x2="185" y2="235" stroke="url(#procBoneGrad)" strokeWidth="5" strokeLinecap="round" />
+
+            {/* Feet */}
+            <ellipse cx="90" cy="238" rx="14" ry="4.5" fill="#334155" />
+            <ellipse cx="190" cy="238" rx="14" ry="4.5" fill="#334155" />
+
+            {/* Head Joint */}
+            <circle cx="140" cy="32" r="16" fill="#ffffff" stroke="#2F6FAF" strokeWidth="3" filter="url(#procGlow)" className="proc-pulse-node" />
+            <circle cx="140" cy="32" r="8" fill="#e0f2fe" />
+
+            {/* Shoulder Joints */}
+            <circle cx="95" cy="62" r="5" fill="#ffffff" stroke="#2F6FAF" strokeWidth="2.5" />
+            <circle cx="185" cy="62" r="5" fill="#ffffff" stroke="#2F6FAF" strokeWidth="2.5" />
+
+            {/* Hip Joints */}
+            <circle cx="110" cy="120" r="6" fill="#ffffff" stroke="#2F6FAF" strokeWidth="2.5" />
+            <circle cx="170" cy="120" r="6" fill="#ffffff" stroke="#2F6FAF" strokeWidth="2.5" />
+
+            {/* Knee Joints (Pulsing tracking beacons) */}
+            <circle cx="100" cy="175" r="7.5" fill="#e0f2fe" stroke="#0284c7" strokeWidth="3" filter="url(#procGlow)" className="proc-pulse-node" />
+            <circle cx="180" cy="175" r="7.5" fill="#e0f2fe" stroke="#0284c7" strokeWidth="3" filter="url(#procGlow)" className="proc-pulse-node" />
+
+            {/* Ankle Joints */}
+            <circle cx="95" cy="235" r="5" fill="#ffffff" stroke="#2F6FAF" strokeWidth="2" />
+            <circle cx="185" cy="235" r="5" fill="#ffffff" stroke="#2F6FAF" strokeWidth="2" />
+          </svg>
         </div>
 
-        <h3>
-          {progress}%
-        </h3>
+        {/* Progress Bar & Percentage */}
+        <div className="processing-progress-section">
+          <div className="progress-info-row">
+            <span className="progress-status-text">{currentMessage}</span>
+            <span className="progress-pct-badge">{progress}%</span>
+          </div>
 
-        <span>
-          {currentMessage}
-        </span>
+          <div className="progress-bar-track">
+            <div
+              className="progress-bar-fill"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
 
+        {/* 4-Step Analysis Stages Checklist (Section 3 Requirement) */}
+        <div className="analysis-stages-grid">
+          {CHECKLIST_STAGES.map((st) => {
+            const Icon = st.icon;
+            const isCompleted = progress >= st.threshold;
+            const isCurrent = !isCompleted && progress >= st.threshold - 30;
+
+            return (
+              <div
+                key={st.id}
+                className={`stage-card ${isCompleted ? "completed" : isCurrent ? "active" : "pending"}`}
+              >
+                <div className="stage-icon-box">
+                  {isCompleted ? (
+                    <CheckCircle2 size={16} className="stage-check-icon" />
+                  ) : isCurrent ? (
+                    <LoaderCircle size={16} className="stage-spin-icon" />
+                  ) : (
+                    <Clock size={16} className="stage-wait-icon" />
+                  )}
+                </div>
+
+                <div className="stage-content">
+                  <h4>{st.title}</h4>
+                  <p>{isCompleted ? "✓ Verified & Completed" : st.detail}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-
     </section>
   );
 }

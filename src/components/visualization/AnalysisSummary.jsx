@@ -75,47 +75,53 @@ export default function AnalysisSummary() {
   }
 
   return (
-    <section className="analysis-summary-pro">
+    <section className="analysis-summary-pro card-3d">
       <div className="section-title-wrapper">
-        <h2 className="section-title">
-          <FileText size={24} color="#2563EB" />
-          Clinical Biomechanics Summary
-        </h2>
-        <span style={{ fontSize: "13px", color: "#64748B", fontWeight: 600 }}>
-          Synthesized Movement Findings
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div className="section-title-icon-box">
+            <FileText size={22} color="#0284c7" />
+          </div>
+          <div>
+            <h2 className="section-title" style={{ margin: 0 }}>
+              Clinical Biomechanics Summary
+            </h2>
+            <span style={{ fontSize: "13px", color: "#64748b", fontWeight: 600 }}>
+              Synthesized Movement Findings &amp; Clinical Insights
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div className="summary-body">
-        <p>{summaryParagraph}</p>
+      <div className="summary-body" style={{ background: "#f8fafc", padding: "18px 22px", borderRadius: "14px", border: "1px solid #e2e8f0", marginBottom: "20px" }}>
+        <p style={{ color: "#334155", lineHeight: "1.7", fontSize: "14.5px" }}>{summaryParagraph}</p>
       </div>
 
       <div className="summary-stats-row">
-        <div className="summary-stat-box">
+        <div className="summary-stat-box card-3d">
           <h4>Overall Classification</h4>
-          <p style={{ color: isHighRisk ? "#DC2626" : isModerate ? "#D97706" : "#059669" }}>
+          <p style={{ color: isHighRisk ? "#ef4444" : isModerate ? "#f59e0b" : "#0284c7", fontWeight: 800 }}>
             {riskLabel} ({riskScore}%)
           </p>
         </div>
 
-        <div className="summary-stat-box">
+        <div className="summary-stat-box card-3d">
           <h4>Model Confidence</h4>
-          <p>{confidence}</p>
+          <p style={{ color: "#0f172a", fontWeight: 800 }}>{confidence}</p>
         </div>
 
-        <div className="summary-stat-box">
+        <div className="summary-stat-box card-3d">
           <h4>Knee Valgus Impact</h4>
-          <p>{valgus != null ? `${valgus}°` : "N/A"}</p>
+          <p style={{ color: "#0f172a", fontWeight: 800 }}>{valgus != null ? `${valgus}°` : "N/A"}</p>
         </div>
 
-        <div className="summary-stat-box">
+        <div className="summary-stat-box card-3d">
           <h4>Recommended Focus</h4>
-          <p style={{ fontSize: "14px", color: "#2563EB" }}>{primaryFocus}</p>
+          <p style={{ fontSize: "13px", color: "#0284c7", fontWeight: 700 }}>{primaryFocus}</p>
         </div>
       </div>
 
-      <p className="disclaimer-text">
-        * Notice: This AI biomechanical analysis provides objective computer-vision screening metrics for coaches and athletic trainers. It does not constitute a medical diagnosis. Consult qualified sports medicine professionals for clinical injury management.
+      <p className="disclaimer-text" style={{ marginTop: "18px", color: "#94a3b8", fontSize: "11.5px", lineHeight: "1.5" }}>
+        * Notice: This AI biomechanical analysis provides objective computer-vision screening metrics for sports performance and injury risk evaluation. It is designed to assist clinical staff and does not substitute for clinical medical diagnosis.
       </p>
     </section>
   );

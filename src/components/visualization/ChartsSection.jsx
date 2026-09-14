@@ -49,14 +49,18 @@ export default function ChartsSection() {
 
   return (
     <section className="section-container">
-      <div className="chart-card-pro">
+      <div className="chart-card-pro card-3d">
         <div className="chart-header">
           <div className="chart-title-area">
-            <h2 style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <BarChart2 size={22} color="#2563EB" />
-              Dynamic Joint Angle Trajectories
-            </h2>
-            <p>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+              <div className="video-header-icon-box">
+                <BarChart2 size={20} color="#0284c7" />
+              </div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+                Dynamic Joint Angle Trajectories
+              </h2>
+            </div>
+            <p style={{ color: "#64748b", fontSize: "13px" }}>
               Frame-by-frame angular motion throughout movement and ground impact
             </p>
           </div>
@@ -109,8 +113,8 @@ export default function ChartsSection() {
                 contentStyle={{
                   backgroundColor: "#FFFFFF",
                   borderRadius: "12px",
-                  border: "1px solid #E2E8F0",
-                  boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+                  border: "1px solid #BAE6FD",
+                  boxShadow: "0 10px 25px rgba(2,132,199,0.08)",
                   fontSize: "13px",
                   fontWeight: 600,
                 }}
@@ -141,7 +145,7 @@ export default function ChartsSection() {
                   type="monotone"
                   dataKey="knee"
                   name="Knee Flexion"
-                  stroke="#2563EB"
+                  stroke="#0284c7"
                   strokeWidth={3}
                   dot={false}
                   activeDot={{ r: 6 }}
@@ -153,7 +157,7 @@ export default function ChartsSection() {
                   type="monotone"
                   dataKey="hip"
                   name="Hip Flexion"
-                  stroke="#16A34A"
+                  stroke="#0891b2"
                   strokeWidth={3}
                   dot={false}
                   activeDot={{ r: 6 }}
@@ -165,7 +169,7 @@ export default function ChartsSection() {
                   type="monotone"
                   dataKey="ankle"
                   name="Ankle Dorsiflexion"
-                  stroke="#F59E0B"
+                  stroke="#f59e0b"
                   strokeWidth={3}
                   dot={false}
                   activeDot={{ r: 6 }}
@@ -173,6 +177,7 @@ export default function ChartsSection() {
               )}
             </LineChart>
           </ResponsiveContainer>
+
         ) : (
           <div
             style={{

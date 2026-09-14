@@ -122,20 +122,26 @@ export default function RecommendationPanel() {
   }
 
   return (
-    <section className="recommendation-panel-pro">
+    <section className="recommendation-panel-pro card-3d">
       <div className="section-title-wrapper">
-        <h2 className="section-title">
-          <Sparkles size={24} color="#2563EB" />
-          AI Performance Recommendations
-        </h2>
-        <span style={{ fontSize: "13px", color: "#64748B", fontWeight: 600 }}>
-          Evidence-Based Preventive Protocols
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div className="section-title-icon-box">
+            <Sparkles size={22} color="#0284c7" />
+          </div>
+          <div>
+            <h2 className="section-title" style={{ margin: 0 }}>
+              AI Performance Recommendations
+            </h2>
+            <span style={{ fontSize: "13px", color: "#64748b", fontWeight: 600 }}>
+              Evidence-Based Preventive Biomechanical Protocols
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="recommendation-grid">
         {recommendations.map((item, index) => (
-          <div className={`rec-card ${item.type}`} key={index}>
+          <div className={`rec-card card-3d ${item.type}`} key={index}>
             <div className="rec-icon-box">
               {item.icon}
             </div>

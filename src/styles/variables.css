@@ -1,20 +1,68 @@
 :root {
+  /* Medical AI Brand Colors */
+  --primary: #0284c7;             /* Medical Blue */
+  --primary-dark: #0369a1;        /* Deep Medical Navy-Blue */
+  --primary-deep: #0f172a;        /* Clinical Slate-Black */
+  --primary-light: #38bdf8;       /* Soft Cyan Accent */
+  --primary-subtle: #f0f7ff;      /* Ultra-light Medical Blue Tint */
+  --primary-tint: #e0f2fe;        /* Soft Blue Pill / Background Tint */
+  /* Muted Medical Blue Palette (Prompt Requirement) */
+  --medical-blue: #2F6FAF;
+  --medical-blue-hover: #23588E;
+  --medical-blue-gradient: linear-gradient(135deg, #4A82B8 0%, #2F6FAF 100%);
+  --medical-blue-gradient-hover: linear-gradient(135deg, #2F6FAF 0%, #23588E 100%);
+  --medical-blue-border: #93c5fd;
+  --medical-blue-shadow: 0 6px 18px rgba(47, 111, 175, 0.22);
+  --medical-blue-subtle: #f0f7ff;
+  /* Healthcare Neutral Surfaces */
+  --background: #f8fafc;          /* Clinical Soft White-Blue Background */
+  --background-secondary: #f1f5f9;
+  --surface: #ffffff;             /* Pure White Cards */
+  --surface-elevated: #ffffff;
 
-  --primary: #2563EB;
-  --primary-light: #60A5FA;
+  /* Typography Colors */
+  --text: #0f172a;                /* Slate 900 */
+  --text-secondary: #334155;      /* Slate 700 */
+  --text-light: #64748b;          /* Slate 500 */
+  --text-muted: #94a3b8;          /* Slate 400 */
 
-  --background: #F5F9FF;
+  /* Borders & Dividers */
+  --border: #e2e8f0;              /* Subtle Light Blue-Gray Border */
+  --border-light: #f1f5f9;
+  --border-accent: #bae6fd;       /* Subtle Cyan Border */
 
-  --white: #FFFFFF;
+  /* Risk Visualization System */
+  --risk-low: #0284c7;            /* Cool Medical Blue / Teal-Blue */
+  --risk-low-bg: #f0f9ff;
+  --risk-low-border: #bae6fd;
+  --risk-low-glow: rgba(2, 132, 199, 0.28);
 
-  --text: #0F172A;
+  --risk-mod: #f59e0b;            /* Warm Amber / Orange Accent */
+  --risk-mod-bg: #fffbeb;
+  --risk-mod-border: #fde68a;
+  --risk-mod-glow: rgba(245, 158, 11, 0.28);
 
-  --text-light: #64748B;
+  --risk-high: #ef4444;           /* Medical Red */
+  --risk-high-bg: #fef2f2;
+  --risk-high-border: #fecaca;
+  --risk-high-glow: rgba(239, 68, 68, 0.32);
 
-  --border: #E2E8F0;
+  /* Elevation & Shadows */
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 24px -4px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  --shadow-lg: 0 16px 36px -6px rgba(2, 132, 199, 0.07), 0 6px 16px -2px rgba(15, 23, 42, 0.03);
+  --shadow-card: 0 10px 30px -4px rgba(2, 132, 199, 0.05), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  --shadow-hover: 0 20px 40px -6px rgba(2, 132, 199, 0.12), 0 8px 18px -4px rgba(15, 23, 42, 0.04);
 
-  --shadow: 0 10px 30px rgba(37,99,235,.08);
+  /* 3D & Radius */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
 
-  --radius:18px;
-
-}
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}

@@ -11,6 +11,7 @@ import {
 import { useDropzone } from "react-dropzone";
 
 import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 import { useAnalysis } from "../../context/AnalysisContext";
 import { setStoredVideo } from "../../services/videoStore";
 import "../../styles/upload.css";
@@ -90,7 +91,9 @@ export default function Upload() {
           >
             <input {...getInputProps()} />
 
-            <UploadCloud size={70} className="upload-icon" />
+            <div className="upload-icon-wrapper">
+              <UploadCloud size={40} className="upload-icon" />
+            </div>
 
             <h2>
               {isDragActive
@@ -112,11 +115,12 @@ export default function Upload() {
                   width: "48px",
                   height: "48px",
                   borderRadius: "14px",
-                  background: "#EFF6FF",
+                  background: "#f0f7ff",
+                  border: "1px solid #bae6fd",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#2563EB",
+                  color: "#2F6FAF",
                 }}
               >
                 <FileCheck size={26} />
@@ -160,6 +164,7 @@ export default function Upload() {
           </div>
         )}
       </section>
+      <Footer />
     </>
   );
 }

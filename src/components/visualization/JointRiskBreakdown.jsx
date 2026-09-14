@@ -68,32 +68,39 @@ export default function JointRiskBreakdown() {
   return (
     <section className="section-container">
       <div className="section-title-wrapper">
-        <h2 className="section-title">
-          <Scale size={24} color="#2563EB" />
-          Bilateral Symmetry & Left vs Right Biomechanics
-        </h2>
-        <span style={{ fontSize: "13px", color: "#64748B", fontWeight: 600 }}>
-          Bilateral Load Distribution (Symmetry: {symmetry}%)
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div className="section-title-icon-box">
+            <Scale size={22} color="#0284c7" />
+          </div>
+          <div>
+            <h2 className="section-title" style={{ margin: 0 }}>
+              Bilateral Symmetry &amp; Left vs Right Biomechanics
+            </h2>
+            <span style={{ fontSize: "13px", color: "#64748b", fontWeight: 600 }}>
+              Bilateral Load Distribution (Symmetry: {symmetry}%)
+            </span>
+          </div>
+        </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "18px" }}>
         {comparisons.map((c, idx) => (
           <div
             key={idx}
-            className="athlete-overview-card"
-            style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "14px", margin: 0 }}
+            className="athlete-overview-card card-3d"
+            style={{ padding: "22px", display: "flex", flexDirection: "column", gap: "14px", margin: 0 }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#0F172A" }}>{c.name}</h3>
+              <h3 style={{ fontSize: "15px", fontWeight: 800, color: "#0f172a" }}>{c.name}</h3>
               <span
                 style={{
                   fontSize: "11px",
-                  fontWeight: 700,
-                  padding: "3px 8px",
-                  borderRadius: "10px",
-                  background: c.delta <= 4 ? "#ECFDF5" : "#FFFBEB",
-                  color: c.delta <= 4 ? "#059669" : "#D97706",
+                  fontWeight: 800,
+                  padding: "4px 10px",
+                  borderRadius: "9999px",
+                  background: c.delta <= 4 ? "#f0f9ff" : "#fffbeb",
+                  border: `1px solid ${c.delta <= 4 ? "#bae6fd" : "#fde68a"}`,
+                  color: c.delta <= 4 ? "#0284c7" : "#d97706",
                 }}
               >
                 Δ {c.delta}{c.unit} ({c.delta <= 4 ? "Symmetric" : "Asymmetric"})
@@ -101,20 +108,21 @@ export default function JointRiskBreakdown() {
             </div>
 
             {/* Left vs Right Bars */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {/* Left Bar */}
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", marginBottom: "3px", color: "#475569" }}>
-                  <span><b>Left Side</b></span>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", marginBottom: "4px", color: "#334155" }}>
+                  <span><b>Left Limb (L)</b></span>
                   <span><b>{c.left}{c.unit}</b></span>
                 </div>
-                <div style={{ height: "8px", background: "#E2E8F0", borderRadius: "6px", overflow: "hidden" }}>
+                <div style={{ height: "8px", background: "#f1f5f9", borderRadius: "9999px", overflow: "hidden" }}>
                   <div
                     style={{
                       height: "100%",
                       width: `${Math.min(100, (c.left / c.max) * 100)}%`,
-                      background: "#2563EB",
-                      borderRadius: "6px",
+                      background: "linear-gradient(90deg, #0284c7, #0369a1)",
+                      borderRadius: "9999px",
+                      transition: "width 0.6s ease",
                     }}
                   />
                 </div>
@@ -122,24 +130,25 @@ export default function JointRiskBreakdown() {
 
               {/* Right Bar */}
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", marginBottom: "3px", color: "#475569" }}>
-                  <span><b>Right Side</b></span>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", marginBottom: "4px", color: "#334155" }}>
+                  <span><b>Right Limb (R)</b></span>
                   <span><b>{c.right}{c.unit}</b></span>
                 </div>
-                <div style={{ height: "8px", background: "#E2E8F0", borderRadius: "6px", overflow: "hidden" }}>
+                <div style={{ height: "8px", background: "#f1f5f9", borderRadius: "9999px", overflow: "hidden" }}>
                   <div
                     style={{
                       height: "100%",
                       width: `${Math.min(100, (c.right / c.max) * 100)}%`,
-                      background: "#10B981",
-                      borderRadius: "6px",
+                      background: "linear-gradient(90deg, #38bdf8, #0ea5e9)",
+                      borderRadius: "9999px",
+                      transition: "width 0.6s ease",
                     }}
                   />
                 </div>
               </div>
             </div>
 
-            <p style={{ fontSize: "12px", color: "#64748B", lineHeight: "18px", marginTop: "2px" }}>
+            <p style={{ fontSize: "12px", color: "#64748b", lineHeight: "18px", marginTop: "2px" }}>
               {c.desc}
             </p>
           </div>
